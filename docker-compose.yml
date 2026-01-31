@@ -1,0 +1,43 @@
+services:
+  trase-db:
+    image: postgres:18.1
+    environment:
+      POSTGRES_DB: trase
+      POSTGRES_USER: trase
+      POSTGRES_PASSWORD: trase
+    ports:
+      - "5432:5432"
+    volumes:
+      - trase-db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-trase} -d ${POSTGRES_DB:-trase}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  trase-int-test-db:
+    image: postgres:18.1
+    environment:
+      POSTGRES_DB: trase_int_test
+      POSTGRES_USER: trase_int_test
+      POSTGRES_PASSWORD: trase_int_test
+    ports:
+      - "5433:5432"
+
+  trase-api:
+    build: .
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_HOST: trase-db
+      DB_PORT: 5432
+      DB_NAME: trase
+      DB_USER: trase
+      DB_PASSWORD: trase
+    ports:
+      - "8080:8080"
+    depends_on:
+      trase-db:
+        condition: service_healthy
+
+volumes:
+  trase-db-data:
