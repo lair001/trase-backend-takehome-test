@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+
+<configuration>
+    <import class="ch.qos.logback.core.ConsoleAppender"/>
+    <import class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"/>
+    <import class="ch.qos.logback.core.rolling.RollingFileAppender"/>
+    <import class="ch.qos.logback.classic.filter.ThresholdFilter"/>
+    <import class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"/>
+
+    <property name="LOG_PATTERN" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{requestId}] - %msg%n"/>
+
+    <appender name="INFO_CONSOLE" class="ConsoleAppender">
+        <encoder class="PatternLayoutEncoder">
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <filter class="ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+
+    <appender name="DEBUG_LOG" class="RollingFileAppender">
+        <file>logs/debug/debug.log</file>
+        <append>true</append>
+        <encoder class="PatternLayoutEncoder">
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <filter class="ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <rollingPolicy class="TimeBasedRollingPolicy">
+            <fileNamePattern>logs/debug/archive/debug-%d{yyyy_MM_dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="INFO_LOG" class="RollingFileAppender">
+        <file>logs/info/info.log</file>
+        <append>true</append>
+        <encoder class="PatternLayoutEncoder">
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <filter class="ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <rollingPolicy class="TimeBasedRollingPolicy">
+            <fileNamePattern>logs/info/archive/info-%d{yyyy_MM_dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ERROR_LOG" class="RollingFileAppender">
+        <file>logs/error/error.log</file>
+        <append>true</append>
+        <encoder class="PatternLayoutEncoder">
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <filter class="ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="TimeBasedRollingPolicy">
+            <fileNamePattern>logs/error/archive/error-%d{yyyy_MM_dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <springProfile name="prod">
+        <root level="INFO">
+            <appender-ref ref="INFO_LOG"/>
+            <appender-ref ref="ERROR_LOG"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="dev">
+        <root level="DEBUG">
+            <appender-ref ref="INFO_CONSOLE"/>
+            <appender-ref ref="DEBUG_LOG"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="int-test | unit-test">
+        <root level="INFO">
+            <appender-ref ref="INFO_CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="default">
+        <root level="INFO">
+            <appender-ref ref="INFO_CONSOLE"/>
+        </root>
+    </springProfile>
+</configuration>
