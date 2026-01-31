@@ -1,0 +1,16 @@
+<template id="swagger-quick-auth-template">
+  <div class="download-url-wrapper" id="swagger-quick-auth">
+    <label class="select-label">
+      <span>Quick Login</span>
+      <select id="swagger-quick-auth-user">
+        <option value="">Select user</option>
+        <option value="admin">admin (ADMIN)</option>
+        <option value="ops">ops (OPERATOR)</option>
+        <option value="runner">runner (RUNNER)</option>
+        <option value="reader">reader (READER)</option>
+      </select>
+    </label>
+    <button class="download-url-button" id="swagger-quick-auth-btn" type="button">Authorize</button>
+    <span class="swagger-quick-auth-status" id="swagger-quick-auth-status" aria-live="polite"></span>
+  </div>
+</template>

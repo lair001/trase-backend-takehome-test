@@ -1,0 +1,18 @@
+.swagger-ui .topbar .topbar-wrapper #swagger-quick-auth {
+  margin-left: 0;
+  flex: 0 0 auto;
+}
+
+.swagger-ui .topbar .topbar-wrapper #swagger-quick-auth .swagger-quick-auth-status {
+  margin-left: 8px;
+  font-size: 12px;
+  color: #f0f0f0;
+}
+
+.swagger-ui .topbar .topbar-wrapper #swagger-quick-auth .swagger-quick-auth-status.is-error {
+  color: #b00020;
+}
+
+.swagger-ui .topbar .topbar-wrapper #swagger-quick-auth .swagger-quick-auth-status.is-success {
+  color: #2e7d32;
+}
