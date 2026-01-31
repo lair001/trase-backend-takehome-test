@@ -1,0 +1,291 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '4.0.2'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
+}
+
+import groovy.xml.XmlSlurper
+
+group = 'com.samlair.trase'
+version = '0.0.1-SNAPSHOT'
+description = "My Solution for Trase's Backend Takehome Test"
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+sourceSets {
+	test {
+		java {
+			srcDirs = []
+		}
+		resources {
+			srcDirs = []
+		}
+	}
+
+	testUtils {
+		java {
+			srcDirs = ['src/testUtils/java']
+		}
+		compileClasspath += sourceSets.main.output
+		compileClasspath += configurations.testCompileClasspath
+
+		runtimeClasspath += sourceSets.main.output
+		runtimeClasspath += configurations.testRuntimeClasspath
+	}
+
+	intTest {
+		java {
+			srcDirs = ['src/intTest/java']
+		}
+		compileClasspath += sourceSets.main.output
+		compileClasspath += configurations.testCompileClasspath
+		compileClasspath += configurations.intTestCompileClasspath
+		compileClasspath += sourceSets.testUtils.output
+
+		runtimeClasspath += sourceSets.main.output
+		runtimeClasspath += configurations.testRuntimeClasspath
+		runtimeClasspath += configurations.intTestRuntimeClasspath
+		runtimeClasspath += sourceSets.testUtils.output
+	}
+
+	perfTest {
+		java {
+			srcDirs = ['src/perfTest/java']
+		}
+		compileClasspath += sourceSets.main.output
+		compileClasspath += configurations.testCompileClasspath
+		compileClasspath += configurations.perfTestCompileClasspath
+		compileClasspath += sourceSets.testUtils.output
+
+		runtimeClasspath += sourceSets.main.output
+		runtimeClasspath += configurations.testRuntimeClasspath
+		runtimeClasspath += configurations.perfTestRuntimeClasspath
+		runtimeClasspath += sourceSets.testUtils.output
+	}
+
+	uiTest {
+		java {
+			srcDirs = ['src/uiTest/java']
+		}
+		compileClasspath += sourceSets.main.output
+		compileClasspath += configurations.testCompileClasspath
+		compileClasspath += configurations.uiTestCompileClasspath
+		compileClasspath += sourceSets.testUtils.output
+		compileClasspath += sourceSets.intTest.output
+
+		runtimeClasspath += sourceSets.main.output
+		runtimeClasspath += configurations.testRuntimeClasspath
+		runtimeClasspath += configurations.uiTestRuntimeClasspath
+		runtimeClasspath += sourceSets.testUtils.output
+		runtimeClasspath += sourceSets.intTest.output
+	}
+
+	unitTest {
+		java {
+			srcDirs = ['src/unitTest/java']
+		}
+		compileClasspath += sourceSets.main.output
+		compileClasspath += configurations.testCompileClasspath
+		compileClasspath += configurations.unitTestCompileClasspath
+		compileClasspath += sourceSets.testUtils.output
+
+		runtimeClasspath += sourceSets.main.output
+		runtimeClasspath += configurations.testRuntimeClasspath
+		runtimeClasspath += configurations.unitTestRuntimeClasspath
+		runtimeClasspath += sourceSets.testUtils.output
+	}
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-aspectj:4.0.2'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator:4.0.2'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+	implementation 'org.liquibase:liquibase-core:5.0.1'
+	implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.3.0'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1'
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'org.postgresql:postgresql:42.7.7'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	unitTestImplementation 'org.junit.jupiter:junit-jupiter:5.14.1'
+	unitTestImplementation 'org.mockito:mockito-junit-jupiter:5.21.0'
+	unitTestImplementation 'org.mockito:mockito-inline:5.2.0'
+	unitTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	intTestImplementation 'org.springframework.boot:spring-boot-starter-test'
+	intTestImplementation 'org.springframework.boot:spring-boot-test'
+	intTestImplementation 'org.springframework.boot:spring-boot-test-autoconfigure'
+	intTestImplementation 'org.testcontainers:junit-jupiter:1.20.3'
+	intTestImplementation 'org.testcontainers:postgresql:1.20.3'
+	intTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	perfTestImplementation 'org.springframework.boot:spring-boot-starter-test'
+	perfTestImplementation 'org.springframework.boot:spring-boot-test'
+	perfTestImplementation 'org.springframework.boot:spring-boot-test-autoconfigure'
+	perfTestImplementation 'org.testcontainers:junit-jupiter:1.20.3'
+	perfTestImplementation 'org.testcontainers:postgresql:1.20.3'
+	perfTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	uiTestImplementation 'org.springframework.boot:spring-boot-starter-test'
+	uiTestImplementation 'org.springframework.boot:spring-boot-test'
+	uiTestImplementation 'org.springframework.boot:spring-boot-test-autoconfigure'
+	uiTestImplementation 'org.testcontainers:junit-jupiter:1.20.3'
+	uiTestImplementation 'org.testcontainers:postgresql:1.20.3'
+	uiTestImplementation 'com.microsoft.playwright:playwright:1.49.0'
+	uiTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+tasks.withType(Test).configureEach {
+	useJUnitPlatform()
+}
+
+jacoco {
+	toolVersion = '0.8.12'
+}
+
+tasks.register('unitTest', Test) {
+	group = 'Verification'
+	description = 'Runs the unit tests.'
+	testClassesDirs = sourceSets.unitTest.output.classesDirs
+	classpath = sourceSets.unitTest.runtimeClasspath
+
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
+
+test.dependsOn unitTest
+
+tasks.register('intTest', Test) {
+	group = 'Verification'
+	description = 'Runs the integration tests.'
+	testClassesDirs = sourceSets.intTest.output.classesDirs
+	classpath = sourceSets.intTest.runtimeClasspath
+	dependsOn bootJar
+
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
+
+test.dependsOn intTest
+
+tasks.register('uiTest', Test) {
+	group = 'Verification'
+	description = 'Runs optional Swagger UI browser tests.'
+	testClassesDirs = sourceSets.uiTest.output.classesDirs
+	classpath = sourceSets.uiTest.runtimeClasspath
+	dependsOn bootJar
+
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
+
+tasks.register('perfProfile', Test) {
+	group = 'Verification'
+	description = 'Runs optional performance profiling tests.'
+	testClassesDirs = sourceSets.perfTest.output.classesDirs
+	classpath = sourceSets.perfTest.runtimeClasspath
+	useJUnitPlatform()
+	dependsOn bootJar
+	systemProperties(System.getProperties().findAll { key, value -> key.toString().startsWith('perf.') })
+}
+
+tasks.register('jacocoCombinedReport', JacocoReport) {
+	dependsOn tasks.named('unitTest'), tasks.named('intTest')
+	executionData(tasks.named('unitTest').get(), tasks.named('intTest').get())
+	sourceDirectories.from(sourceSets.main.allSource.srcDirs)
+	classDirectories.from(sourceSets.main.output)
+	reports {
+		xml.required = true
+		html.required = true
+	}
+}
+
+tasks.register('jacocoCombinedCoverageVerification', JacocoCoverageVerification) {
+	dependsOn tasks.named('unitTest'), tasks.named('intTest')
+	executionData(tasks.named('unitTest').get(), tasks.named('intTest').get())
+	sourceDirectories.from(sourceSets.main.allSource.srcDirs)
+	classDirectories.from(sourceSets.main.output)
+	violationRules {
+		rule {
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.90
+			}
+			limit {
+				counter = 'BRANCH'
+				value = 'COVEREDRATIO'
+				minimum = 0.90
+			}
+			limit {
+				counter = 'METHOD'
+				value = 'COVEREDRATIO'
+				minimum = 0.90
+			}
+			limit {
+				counter = 'INSTRUCTION'
+				value = 'COVEREDRATIO'
+				minimum = 0.90
+			}
+		}
+	}
+}
+
+tasks.register('coverage') {
+	group = 'Verification'
+	description = 'Runs unit + integration tests with combined coverage report and verification.'
+	dependsOn tasks.named('jacocoCombinedReport'), tasks.named('jacocoCombinedCoverageVerification')
+	doLast {
+		def reportFile = file('build/reports/jacoco/jacocoCombinedReport/jacocoCombinedReport.xml')
+		if (!reportFile.exists()) {
+			logger.warn("Coverage summary skipped; report not found at ${reportFile}")
+			return
+		}
+		def reportText = reportFile.getText('UTF-8').replaceFirst(/<!DOCTYPE[^>]*>/, '')
+		def report = new XmlSlurper(false, false).parseText(reportText)
+		def counters = report.counter.collectEntries { c ->
+			[(c.@type.toString()): [missed: c.@missed.toBigInteger(), covered: c.@covered.toBigInteger()]]
+		}
+		def summary = ['INSTRUCTION', 'LINE', 'BRANCH', 'METHOD'].collect { type ->
+			def counter = counters[type]
+			def total = counter.missed + counter.covered
+			def ratio = total == 0 ? 1.0 : (counter.covered as BigDecimal) / (total as BigDecimal)
+			"${type.padRight(11)} ${(ratio * 100).setScale(2, BigDecimal.ROUND_HALF_UP)}% " +
+					"(covered ${counter.covered}, missed ${counter.missed})"
+		}
+		logger.lifecycle('')
+		logger.lifecycle('Coverage summary (combined unit + integration):')
+		summary.each { logger.lifecycle("  ${it}") }
+		logger.lifecycle('')
+	}
+}
+
+tasks.named('test') {
+	finalizedBy tasks.named('coverage')
+}
