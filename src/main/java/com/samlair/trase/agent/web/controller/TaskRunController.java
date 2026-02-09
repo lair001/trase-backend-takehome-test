@@ -45,6 +45,13 @@ public class TaskRunController {
 
 	private final TaskRunService taskRunService;
 
+	/**
+	 * Starts a new task run.
+	 *
+	 * @param request task run payload.
+	 * @param idempotencyKey optional idempotency header.
+	 * @return created task run response.
+	 */
 	@PostMapping
 	@Operation(
 			summary = "Start task run",
@@ -73,6 +80,14 @@ public class TaskRunController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(taskRunService.startTaskRun(request, idempotencyKey));
 	}
 
+	/**
+	 * Lists task runs with optional status filter and pagination.
+	 *
+	 * @param status optional status filter.
+	 * @param afterId optional keyset cursor.
+	 * @param pageable paging configuration.
+	 * @return list of task runs.
+	 */
 	@GetMapping
 	@Operation(
 			summary = "List task runs",
@@ -107,6 +122,13 @@ public class TaskRunController {
 		return taskRunService.listTaskRuns(status, pageable, afterId);
 	}
 
+	/**
+	 * Updates the status of an existing task run.
+	 *
+	 * @param id task run identifier.
+	 * @param request status update payload.
+	 * @return updated task run response.
+	 */
 	@PatchMapping("/{id}")
 	@Operation(summary = "Update task run status", description = "Roles: ADMIN, OPERATOR, RUNNER.")
 	public TaskRunResponseDto updateTaskRunStatus(@PathVariable long id,

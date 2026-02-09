@@ -9,5 +9,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface RoleDao extends JpaRepository<RoleEntity, Long> {
 
+	/**
+	 * Finds a role by name.
+	 *
+	 * @param name role name.
+	 * @return optional role.
+	 */
 	Optional<RoleEntity> findByName(String name);
 }

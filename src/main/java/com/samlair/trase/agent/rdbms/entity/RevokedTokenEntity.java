@@ -35,6 +35,9 @@ public class RevokedTokenEntity {
 	@Column(name = "expires_at", nullable = false)
 	private Instant expiresAt;
 
+	/**
+	 * Initializes the revoked timestamp if it is not already set.
+	 */
 	@PrePersist
 	void onCreate() {
 		if (revokedAt == null) {

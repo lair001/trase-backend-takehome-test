@@ -10,6 +10,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HealthAliasController {
 
+	/**
+	 * Forwards to the Actuator health endpoint.
+	 *
+	 * @return forward instruction for the health endpoint.
+	 */
 	@GetMapping("/healthz")
 	@Operation(summary = "Health check", description = "Alias for /actuator/health.")
 	public String health() {

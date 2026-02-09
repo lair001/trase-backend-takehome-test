@@ -16,6 +16,9 @@ public class TokenRevocationServiceImpl implements TokenRevocationService {
 
 	private final RevokedTokenDao revokedTokenDao;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isRevoked(String jti) {
 		if (jti == null || jti.isBlank()) {
@@ -24,6 +27,9 @@ public class TokenRevocationServiceImpl implements TokenRevocationService {
 		return revokedTokenDao.existsByJti(jti);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void revoke(String jti, Instant expiresAt) {
 		if (jti == null || jti.isBlank() || expiresAt == null) {
@@ -38,6 +44,9 @@ public class TokenRevocationServiceImpl implements TokenRevocationService {
 		revokedTokenDao.save(entity);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void cleanupExpired(Instant cutoff) {
 		if (cutoff == null) {

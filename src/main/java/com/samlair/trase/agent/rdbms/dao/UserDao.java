@@ -9,7 +9,19 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface UserDao extends JpaRepository<UserEntity, Long> {
 
+	/**
+	 * Finds a user by username.
+	 *
+	 * @param username username to search.
+	 * @return optional user.
+	 */
 	Optional<UserEntity> findByUsername(String username);
 
+	/**
+	 * Finds an enabled user by username.
+	 *
+	 * @param username username to search.
+	 * @return optional enabled user.
+	 */
 	Optional<UserEntity> findByUsernameAndEnabledTrue(String username);
 }

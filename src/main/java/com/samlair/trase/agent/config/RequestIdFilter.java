@@ -19,6 +19,15 @@ public class RequestIdFilter extends OncePerRequestFilter {
 	public static final String REQUEST_ID_HEADER = "X-Request-Id";
 	public static final String REQUEST_ID_MDC_KEY = "requestId";
 
+	/**
+	 * Ensures each request carries a correlation ID in headers and MDC.
+	 *
+	 * @param request HTTP request.
+	 * @param response HTTP response.
+	 * @param filterChain downstream filter chain.
+	 * @throws ServletException when the filter fails.
+	 * @throws IOException when the response cannot be written.
+	 */
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {

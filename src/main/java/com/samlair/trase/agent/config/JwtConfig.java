@@ -28,21 +28,46 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 @Configuration
 public class JwtConfig {
 
+	/**
+	 * Loads the RSA public key used to verify JWT signatures.
+	 *
+	 * @param resource resource pointing to the public key PEM.
+	 * @return public key.
+	 */
 	@Bean
 	public RSAPublicKey jwtPublicKey(@Value("${security.jwt.public-key}") Resource resource) {
 		return readPublicKey(resource);
 	}
 
+	/**
+	 * Loads the RSA private key used to sign JWTs.
+	 *
+	 * @param resource resource pointing to the private key PEM.
+	 * @return private key.
+	 */
 	@Bean
 	public RSAPrivateKey jwtPrivateKey(@Value("${security.jwt.private-key}") Resource resource) {
 		return readPrivateKey(resource);
 	}
 
+	/**
+	 * Builds the JWT decoder for validating tokens.
+	 *
+	 * @param publicKey public key to verify signatures.
+	 * @return decoder instance.
+	 */
 	@Bean
 	public JwtDecoder jwtDecoder(RSAPublicKey publicKey) {
 		return NimbusJwtDecoder.withPublicKey(publicKey).build();
 	}
 
+	/**
+	 * Builds the JWT encoder for issuing tokens.
+	 *
+	 * @param publicKey public key to embed in the JWK set.
+	 * @param privateKey private key for signing.
+	 * @return encoder instance.
+	 */
 	@Bean
 	public JwtEncoder jwtEncoder(RSAPublicKey publicKey, RSAPrivateKey privateKey) {
 		RSAKey rsaKey = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
@@ -50,11 +75,22 @@ public class JwtConfig {
 		return new NimbusJwtEncoder(new ImmutableJWKSet<>(jwkSet));
 	}
 
+	/**
+	 * Provides the password encoder used for hashing stored credentials.
+	 *
+	 * @return password encoder.
+	 */
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
+	/**
+	 * Parses an RSA public key from a PEM resource.
+	 *
+	 * @param resource resource containing the public key.
+	 * @return parsed public key.
+	 */
 	private RSAPublicKey readPublicKey(Resource resource) {
 		byte[] keyBytes = readPem(resource, "PUBLIC KEY");
 		try {
@@ -66,6 +102,12 @@ public class JwtConfig {
 		}
 	}
 
+	/**
+	 * Parses an RSA private key from a PEM resource.
+	 *
+	 * @param resource resource containing the private key.
+	 * @return parsed private key.
+	 */
 	private RSAPrivateKey readPrivateKey(Resource resource) {
 		byte[] keyBytes = readPem(resource, "PRIVATE KEY");
 		try {
@@ -77,6 +119,13 @@ public class JwtConfig {
 		}
 	}
 
+	/**
+	 * Reads and decodes the PEM payload for the given key type.
+	 *
+	 * @param resource resource containing the PEM data.
+	 * @param type PEM key type label.
+	 * @return decoded DER bytes.
+	 */
 	private byte[] readPem(Resource resource, String type) {
 		try {
 			String pem = resource.getContentAsString(StandardCharsets.US_ASCII);

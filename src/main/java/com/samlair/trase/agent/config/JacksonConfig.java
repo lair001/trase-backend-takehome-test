@@ -11,6 +11,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class JacksonConfig {
 
+	/**
+	 * Builds the shared Jackson {@link ObjectMapper} with Java time support.
+	 *
+	 * @return configured object mapper.
+	 */
 	@Bean
 	public ObjectMapper objectMapper() {
 		return new ObjectMapper().registerModule(new JavaTimeModule());

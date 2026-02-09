@@ -26,6 +26,11 @@ public record CreateTaskRequestDto(
 		@JsonAlias({"supported_agent_id"})
 		Long supportedAgentId
 ) {
+	/**
+	 * Ensures at least one supported agent id is provided.
+	 *
+	 * @return true when supported agent fields are populated.
+	 */
 	@AssertTrue(message = "supportedAgentIds or supportedAgentId must contain at least one agent id")
 	boolean isSupportedAgentValid() {
 		return (supportedAgentIds != null && !supportedAgentIds.isEmpty()) || supportedAgentId != null;

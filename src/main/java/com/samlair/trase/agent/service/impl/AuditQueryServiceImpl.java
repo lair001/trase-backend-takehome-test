@@ -31,6 +31,9 @@ public class AuditQueryServiceImpl implements AuditQueryService {
 	private final TaskAuditDao taskAuditDao;
 	private final TaskRunAuditDao taskRunAuditDao;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional(readOnly = true)
 	@Override
 	public List<AgentAuditResponseDto> listAgentAudits(Pageable pageable) {
@@ -39,6 +42,9 @@ public class AuditQueryServiceImpl implements AuditQueryService {
 		return audits.stream().map(this::toResponse).toList();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional(readOnly = true)
 	@Override
 	public List<TaskAuditResponseDto> listTaskAudits(Pageable pageable) {
@@ -47,6 +53,9 @@ public class AuditQueryServiceImpl implements AuditQueryService {
 		return audits.stream().map(this::toResponse).toList();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional(readOnly = true)
 	@Override
 	public List<TaskRunAuditResponseDto> listTaskRunAudits(Pageable pageable) {
@@ -55,6 +64,12 @@ public class AuditQueryServiceImpl implements AuditQueryService {
 		return audits.stream().map(this::toResponse).toList();
 	}
 
+	/**
+	 * Maps an agent audit entity to a response DTO.
+	 *
+	 * @param audit agent audit entity.
+	 * @return response DTO.
+	 */
 	private AgentAuditResponseDto toResponse(AgentAuditEntity audit) {
 		return new AgentAuditResponseDto(
 				audit.getId(),
@@ -67,6 +82,12 @@ public class AuditQueryServiceImpl implements AuditQueryService {
 		);
 	}
 
+	/**
+	 * Maps a task audit entity to a response DTO.
+	 *
+	 * @param audit task audit entity.
+	 * @return response DTO.
+	 */
 	private TaskAuditResponseDto toResponse(TaskAuditEntity audit) {
 		return new TaskAuditResponseDto(
 				audit.getId(),
@@ -79,6 +100,12 @@ public class AuditQueryServiceImpl implements AuditQueryService {
 		);
 	}
 
+	/**
+	 * Maps a task run audit entity to a response DTO.
+	 *
+	 * @param audit task run audit entity.
+	 * @return response DTO.
+	 */
 	private TaskRunAuditResponseDto toResponse(TaskRunAuditEntity audit) {
 		return new TaskRunAuditResponseDto(
 				audit.getId(),

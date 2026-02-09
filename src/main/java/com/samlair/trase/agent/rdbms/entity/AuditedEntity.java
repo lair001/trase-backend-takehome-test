@@ -22,20 +22,20 @@ public abstract class AuditedEntity {
 	@Column(name = "updated_at", nullable = false)
 	private Instant updatedAt;
 
-	@PrePersist
 	/**
 	 * Initializes timestamps when the entity is first persisted.
 	 */
+	@PrePersist
 	protected void onCreate() {
 		Instant now = Instant.now();
 		createdAt = now;
 		updatedAt = now;
 	}
 
-	@PreUpdate
 	/**
 	 * Updates the modified timestamp before persistence.
 	 */
+	@PreUpdate
 	protected void onUpdate() {
 		updatedAt = Instant.now();
 	}

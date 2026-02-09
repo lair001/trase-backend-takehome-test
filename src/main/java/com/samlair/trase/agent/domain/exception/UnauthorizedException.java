@@ -5,6 +5,9 @@ package com.samlair.trase.agent.domain.exception;
  */
 public class UnauthorizedException extends TraseAgentException {
 
+	/**
+	 * Creates an unauthorized exception with a human-readable message.
+	 */
 	public UnauthorizedException(String message) {
 		super(message);
 	}

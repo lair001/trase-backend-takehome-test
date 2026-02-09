@@ -30,28 +30,61 @@ public class RestExceptionHandler {
 	private static final Logger log = LoggerFactory.getLogger(RestExceptionHandler.class);
 	private final RateLimiterRegistry rateLimiterRegistry;
 
+	/**
+	 * Creates the exception handler with access to rate limiter configuration.
+	 *
+	 * @param rateLimiterRegistry registry for rate limiter metrics.
+	 */
 	public RestExceptionHandler(RateLimiterRegistry rateLimiterRegistry) {
 		this.rateLimiterRegistry = rateLimiterRegistry;
 	}
 
+	/**
+	 * Handles resource not found errors.
+	 *
+	 * @param ex exception thrown.
+	 * @param request current HTTP request.
+	 * @return standardized error response.
+	 */
 	@ExceptionHandler(NotFoundException.class)
 	public ResponseEntity<ApiErrorDto> handleNotFound(NotFoundException ex, HttpServletRequest request) {
 		log.info("Not found: {} {}", request.getMethod(), request.getRequestURI());
 		return buildError(HttpStatus.NOT_FOUND, ex.getMessage(), request, null);
 	}
 
+	/**
+	 * Handles validation and request errors.
+	 *
+	 * @param ex exception thrown.
+	 * @param request current HTTP request.
+	 * @return standardized error response.
+	 */
 	@ExceptionHandler(BadRequestException.class)
 	public ResponseEntity<ApiErrorDto> handleBadRequest(BadRequestException ex, HttpServletRequest request) {
 		log.info("Bad request: {} {}", request.getMethod(), request.getRequestURI());
 		return buildError(HttpStatus.BAD_REQUEST, ex.getMessage(), request, null);
 	}
 
+	/**
+	 * Handles authentication and authorization errors.
+	 *
+	 * @param ex exception thrown.
+	 * @param request current HTTP request.
+	 * @return standardized error response.
+	 */
 	@ExceptionHandler(UnauthorizedException.class)
 	public ResponseEntity<ApiErrorDto> handleUnauthorized(UnauthorizedException ex, HttpServletRequest request) {
 		log.info("Unauthorized: {} {}", request.getMethod(), request.getRequestURI());
 		return buildError(HttpStatus.UNAUTHORIZED, ex.getMessage(), request, null);
 	}
 
+	/**
+	 * Handles bean validation failures.
+	 *
+	 * @param ex exception thrown.
+	 * @param request current HTTP request.
+	 * @return standardized error response with validation details.
+	 */
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ApiErrorDto> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
 		Map<String, String> errors = new LinkedHashMap<>();
@@ -62,6 +95,13 @@ public class RestExceptionHandler {
 		return buildError(HttpStatus.BAD_REQUEST, "Validation failed", request, errors);
 	}
 
+	/**
+	 * Handles rate limit exceptions from Resilience4j.
+	 *
+	 * @param ex exception thrown.
+	 * @param request current HTTP request.
+	 * @return standardized error response with rate limit headers.
+	 */
 	@ExceptionHandler(RequestNotPermitted.class)
 	public ResponseEntity<ApiErrorDto> handleRateLimit(RequestNotPermitted ex, HttpServletRequest request) {
 		log.warn("Rate limit exceeded: {} {}", request.getMethod(), request.getRequestURI());
@@ -69,12 +109,28 @@ public class RestExceptionHandler {
 		return withRateLimitHeaders(response);
 	}
 
+	/**
+	 * Handles unexpected errors.
+	 *
+	 * @param ex exception thrown.
+	 * @param request current HTTP request.
+	 * @return standardized error response.
+	 */
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ApiErrorDto> handleUnexpected(Exception ex, HttpServletRequest request) {
 		log.error("Unexpected error on {} {}", request.getMethod(), request.getRequestURI(), ex);
 		return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error", request, null);
 	}
 
+	/**
+	 * Builds a standardized error response body.
+	 *
+	 * @param status HTTP status.
+	 * @param message human-readable message.
+	 * @param request current HTTP request.
+	 * @param validationErrors optional validation errors map.
+	 * @return standardized error response.
+	 */
 	private ResponseEntity<ApiErrorDto> buildError(HttpStatus status, String message, HttpServletRequest request,
 			Map<String, String> validationErrors) {
 		ApiErrorDto apiError = new ApiErrorDto(
@@ -88,6 +144,12 @@ public class RestExceptionHandler {
 		return ResponseEntity.status(status).body(apiError);
 	}
 
+	/**
+	 * Adds rate limit headers to the provided response.
+	 *
+	 * @param response original response.
+	 * @return response with rate limit headers.
+	 */
 	private ResponseEntity<ApiErrorDto> withRateLimitHeaders(ResponseEntity<ApiErrorDto> response) {
 		RateLimiter limiter = rateLimiterRegistry.rateLimiter("api");
 		long limit = limiter.getRateLimiterConfig().getLimitForPeriod();

@@ -37,6 +37,9 @@ public class AuthServiceImpl implements AuthService {
 	@Value("${security.jwt.token-ttl:1h}")
 	private Duration tokenTtl;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public LoginResponseDto login(LoginRequestDto request) {
 		UserEntity user = userDao.findByUsernameAndEnabledTrue(request.username())

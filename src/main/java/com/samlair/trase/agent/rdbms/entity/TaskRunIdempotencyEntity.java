@@ -42,6 +42,9 @@ public class TaskRunIdempotencyEntity {
 	@Column(name = "created_at", nullable = false)
 	private Instant createdAt;
 
+	/**
+	 * Initializes the creation timestamp if it is not already set.
+	 */
 	@PrePersist
 	void onCreate() {
 		if (createdAt == null) {

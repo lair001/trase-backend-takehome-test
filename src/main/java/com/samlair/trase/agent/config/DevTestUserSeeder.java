@@ -25,6 +25,11 @@ public class DevTestUserSeeder implements ApplicationRunner {
 	private final RoleDao roleDao;
 	private final PasswordEncoder passwordEncoder;
 
+	/**
+	 * Seeds development and integration test users on startup.
+	 *
+	 * @param args application startup arguments.
+	 */
 	@Override
 	public void run(ApplicationArguments args) {
 		RoleEntity adminRole = ensureRole("ADMIN");
@@ -38,6 +43,12 @@ public class DevTestUserSeeder implements ApplicationRunner {
 		ensureUser("reader", "reader123!", Set.of(readerRole));
 	}
 
+	/**
+	 * Creates the role if it does not already exist.
+	 *
+	 * @param name role name.
+	 * @return persisted role entity.
+	 */
 	private RoleEntity ensureRole(String name) {
 		return roleDao.findByName(name).orElseGet(() -> {
 			RoleEntity role = new RoleEntity();
@@ -46,6 +57,13 @@ public class DevTestUserSeeder implements ApplicationRunner {
 		});
 	}
 
+	/**
+	 * Creates the user if it does not already exist.
+	 *
+	 * @param username username to create.
+	 * @param password plaintext password to hash.
+	 * @param roles roles assigned to the user.
+	 */
 	private void ensureUser(String username, String password, Set<RoleEntity> roles) {
 		if (userDao.findByUsername(username).isPresent()) {
 			return;

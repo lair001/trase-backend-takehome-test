@@ -14,6 +14,15 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerUiCustomizationConfig {
 
+	/**
+	 * Builds the Swagger index transformer that injects quick-auth UI content.
+	 *
+	 * @param swaggerUiConfigProperties swagger UI configuration.
+	 * @param swaggerUiOAuthProperties swagger UI OAuth configuration.
+	 * @param swaggerWelcomeCommon common Swagger UI helper.
+	 * @param objectMapperProvider Jackson object mapper provider.
+	 * @return index transformer for Swagger UI.
+	 */
 	@Bean
 	public SwaggerIndexTransformer swaggerIndexTransformer(
 			SwaggerUiConfigProperties swaggerUiConfigProperties,

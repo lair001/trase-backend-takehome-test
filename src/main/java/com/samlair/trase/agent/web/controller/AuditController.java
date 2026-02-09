@@ -29,6 +29,12 @@ public class AuditController {
 
 	private final AuditQueryService auditQueryService;
 
+	/**
+	 * Lists agent audit entries.
+	 *
+	 * @param pageable paging configuration.
+	 * @return list of agent audit entries.
+	 */
 	@GetMapping("/agents")
 	@Operation(
 			summary = "List agent audits",
@@ -50,6 +56,12 @@ public class AuditController {
 		return auditQueryService.listAgentAudits(pageable);
 	}
 
+	/**
+	 * Lists task audit entries.
+	 *
+	 * @param pageable paging configuration.
+	 * @return list of task audit entries.
+	 */
 	@GetMapping("/tasks")
 	@Operation(
 			summary = "List task audits",
@@ -71,6 +83,12 @@ public class AuditController {
 		return auditQueryService.listTaskAudits(pageable);
 	}
 
+	/**
+	 * Lists task run audit entries.
+	 *
+	 * @param pageable paging configuration.
+	 * @return list of task run audit entries.
+	 */
 	@GetMapping("/task-runs")
 	@Operation(
 			summary = "List task run audits",

@@ -44,6 +44,13 @@ public class AgentController {
 
 	private final AgentService agentService;
 
+	/**
+	 * Lists agents with optional keyset or offset pagination.
+	 *
+	 * @param afterId optional keyset cursor.
+	 * @param pageable paging configuration.
+	 * @return list of agents.
+	 */
 	@GetMapping
 	@Operation(
 			summary = "List agents",
@@ -74,6 +81,12 @@ public class AgentController {
 		return agentService.listAgents(pageable, afterId);
 	}
 
+	/**
+	 * Creates a new agent.
+	 *
+	 * @param request agent payload.
+	 * @return created agent response.
+	 */
 	@PostMapping
 	@Operation(
 			summary = "Create agent",
@@ -100,12 +113,25 @@ public class AgentController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(agentService.createAgent(request));
 	}
 
+	/**
+	 * Retrieves a single agent.
+	 *
+	 * @param id agent identifier.
+	 * @return agent response.
+	 */
 	@GetMapping("/{id}")
 	@Operation(summary = "Get agent", description = "Roles: ADMIN, OPERATOR, RUNNER, READER.")
 	public AgentResponseDto getAgent(@PathVariable long id) {
 		return agentService.getAgent(id);
 	}
 
+	/**
+	 * Updates an existing agent.
+	 *
+	 * @param id agent identifier.
+	 * @param request updated agent payload.
+	 * @return updated agent response.
+	 */
 	@PutMapping("/{id}")
 	@Operation(summary = "Update agent", description = "Roles: ADMIN, OPERATOR.")
 	public AgentResponseDto updateAgent(@PathVariable long id, @Valid @RequestBody UpdateAgentRequestDto request) {
@@ -113,6 +139,12 @@ public class AgentController {
 		return agentService.updateAgent(id, request);
 	}
 
+	/**
+	 * Soft deletes an agent.
+	 *
+	 * @param id agent identifier.
+	 * @return no-content response.
+	 */
 	@DeleteMapping("/{id}")
 	@Operation(summary = "Delete agent", description = "Roles: ADMIN, OPERATOR.")
 	public ResponseEntity<Void> deleteAgent(@PathVariable long id) {

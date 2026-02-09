@@ -33,6 +33,15 @@ public class RevokedTokenFilter extends OncePerRequestFilter {
 	private final TokenRevocationService tokenRevocationService;
 	private final ObjectMapper objectMapper;
 
+	/**
+	 * Rejects requests when the JWT is present in the revocation store.
+	 *
+	 * @param request HTTP request.
+	 * @param response HTTP response.
+	 * @param filterChain downstream filter chain.
+	 * @throws ServletException when the filter fails.
+	 * @throws IOException when the response cannot be written.
+	 */
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
@@ -49,6 +58,13 @@ public class RevokedTokenFilter extends OncePerRequestFilter {
 		filterChain.doFilter(request, response);
 	}
 
+	/**
+	 * Writes a standard unauthorized response payload.
+	 *
+	 * @param response HTTP response.
+	 * @param path request path.
+	 * @throws IOException when the body cannot be written.
+	 */
 	private void writeUnauthorized(HttpServletResponse response, String path) throws IOException {
 		ApiErrorDto error = new ApiErrorDto(
 				Instant.now(),

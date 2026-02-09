@@ -48,6 +48,9 @@ public class AgentAuditEntity {
 	@Column(name = "occurred_at", nullable = false)
 	private Instant occurredAt;
 
+	/**
+	 * Initializes the audit timestamp if it is not already set.
+	 */
 	@PrePersist
 	void onCreate() {
 		if (occurredAt == null) {

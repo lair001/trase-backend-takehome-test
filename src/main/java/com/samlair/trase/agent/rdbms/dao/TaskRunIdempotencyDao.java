@@ -9,5 +9,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface TaskRunIdempotencyDao extends JpaRepository<TaskRunIdempotencyEntity, Long> {
 
+	/**
+	 * Finds the idempotency record by key.
+	 *
+	 * @param idempotencyKey idempotency key value.
+	 * @return optional idempotency record.
+	 */
 	Optional<TaskRunIdempotencyEntity> findByIdempotencyKey(String idempotencyKey);
 }

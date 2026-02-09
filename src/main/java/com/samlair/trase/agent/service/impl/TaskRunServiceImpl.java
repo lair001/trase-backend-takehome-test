@@ -46,6 +46,9 @@ public class TaskRunServiceImpl implements TaskRunService {
 	private final TaskRunIdempotencyDao taskRunIdempotencyDao;
 	private final AuditService auditService;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional
 	@Override
 	public TaskRunResponseDto startTaskRun(CreateTaskRunRequestDto request, String idempotencyKey) {
@@ -81,6 +84,9 @@ public class TaskRunServiceImpl implements TaskRunService {
 		return toResponse(saved);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional(readOnly = true)
 	@Override
 	public List<TaskRunResponseDto> listTaskRuns(TaskRunStatus status, Pageable pageable, Long afterId) {
@@ -99,6 +105,9 @@ public class TaskRunServiceImpl implements TaskRunService {
 		return runs.stream().map(this::toResponse).toList();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional
 	@Override
 	public TaskRunResponseDto updateTaskRunStatus(long id, TaskRunStatus status) {
@@ -119,6 +128,12 @@ public class TaskRunServiceImpl implements TaskRunService {
 		return toResponse(saved);
 	}
 
+	/**
+	 * Maps a task run entity to a response DTO.
+	 *
+	 * @param run task run entity.
+	 * @return response DTO.
+	 */
 	private TaskRunResponseDto toResponse(TaskRunEntity run) {
 		return new TaskRunResponseDto(
 				run.getId(),
@@ -130,6 +145,13 @@ public class TaskRunServiceImpl implements TaskRunService {
 		);
 	}
 
+	/**
+	 * Returns a cached response when the idempotency key was previously used.
+	 *
+	 * @param request task run request payload.
+	 * @param key normalized idempotency key.
+	 * @return cached response or null when not found.
+	 */
 	private TaskRunResponseDto maybeReturnIdempotentResponse(CreateTaskRunRequestDto request, String key) {
 		return taskRunIdempotencyDao.findByIdempotencyKey(key)
 				.map(existing -> {
@@ -143,6 +165,14 @@ public class TaskRunServiceImpl implements TaskRunService {
 				.orElse(null);
 	}
 
+	/**
+	 * Persists the idempotency record and handles concurrent insert collisions.
+	 *
+	 * @param key normalized idempotency key.
+	 * @param request task run request payload.
+	 * @param run task run entity.
+	 * @return cached response when a collision yields an existing record, or null.
+	 */
 	private TaskRunResponseDto persistIdempotencyKey(String key, CreateTaskRunRequestDto request, TaskRunEntity run) {
 		TaskRunIdempotencyEntity entity = new TaskRunIdempotencyEntity();
 		entity.setIdempotencyKey(key);
@@ -160,6 +190,12 @@ public class TaskRunServiceImpl implements TaskRunService {
 		}
 	}
 
+	/**
+	 * Normalizes and validates the idempotency key.
+	 *
+	 * @param key raw idempotency key.
+	 * @return normalized key, or null when blank.
+	 */
 	private String normalizeKey(String key) {
 		if (key == null) {
 			return null;
@@ -174,6 +210,12 @@ public class TaskRunServiceImpl implements TaskRunService {
 		return trimmed;
 	}
 
+	/**
+	 * Hashes the idempotency request payload for collision checks.
+	 *
+	 * @param request task run request payload.
+	 * @return SHA-256 hash of the request fields.
+	 */
 	private String hashRequest(CreateTaskRunRequestDto request) {
 		String payload = request.taskId() + ":" + request.agentId();
 		try {

@@ -12,6 +12,13 @@ import org.springframework.core.io.ResourceLoader;
 @Configuration
 public class LiquibaseConfig {
 
+	/**
+	 * Creates the Liquibase runner with the application changelog.
+	 *
+	 * @param dataSource datasource for migrations.
+	 * @param resourceLoader resource loader for nested jar compatibility.
+	 * @return configured Liquibase instance.
+	 */
 	@Bean
 	public SpringLiquibase liquibase(DataSource dataSource, ResourceLoader resourceLoader) {
 		SpringLiquibase liquibase = new SpringLiquibase();

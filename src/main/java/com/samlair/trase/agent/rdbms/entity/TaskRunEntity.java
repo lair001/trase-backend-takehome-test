@@ -52,10 +52,10 @@ public class TaskRunEntity {
 	@Column(name = "completed_at")
 	private Instant completedAt;
 
-	@PrePersist
 	/**
 	 * Initializes the start time for a new run if not provided.
 	 */
+	@PrePersist
 	protected void onCreate() {
 		if (startedAt == null) {
 			startedAt = Instant.now();

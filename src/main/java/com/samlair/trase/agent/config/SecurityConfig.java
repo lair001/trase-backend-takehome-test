@@ -21,6 +21,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
+	/**
+	 * Builds the security filter chain for API authorization.
+	 *
+	 * @param http Spring Security HTTP configuration.
+	 * @param revokedTokenFilter filter that rejects revoked JWTs.
+	 * @return configured filter chain.
+	 * @throws Exception when configuration fails.
+	 */
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http, RevokedTokenFilter revokedTokenFilter)
 			throws Exception {
@@ -55,12 +63,23 @@ public class SecurityConfig {
 		return http.build();
 	}
 
+	/**
+	 * Builds a converter that maps JWT roles to Spring authorities.
+	 *
+	 * @return configured JWT authentication converter.
+	 */
 	private JwtAuthenticationConverter jwtAuthenticationConverter() {
 		JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
 		converter.setJwtGrantedAuthoritiesConverter(this::extractAuthorities);
 		return converter;
 	}
 
+	/**
+	 * Extracts role authorities from the JWT "roles" claim.
+	 *
+	 * @param jwt JWT token payload.
+	 * @return collection of granted authorities.
+	 */
 	private Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
 		Object rolesClaim = jwt.getClaims().get("roles");
 		if (rolesClaim instanceof Collection<?> roles) {

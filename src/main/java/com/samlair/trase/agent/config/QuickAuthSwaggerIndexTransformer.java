@@ -14,6 +14,9 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.servlet.resource.ResourceTransformerChain;
 import org.springframework.web.servlet.resource.TransformedResource;
 
+/**
+ * Injects quick-auth markup and assets into the Swagger UI index page.
+ */
 final class QuickAuthSwaggerIndexTransformer extends SwaggerIndexPageTransformer {
 
 	private static final String SWAGGER_UI_DIV = "<div id=\"swagger-ui\"></div>";
@@ -25,6 +28,14 @@ final class QuickAuthSwaggerIndexTransformer extends SwaggerIndexPageTransformer
 
 	private final Resource templateResource;
 
+	/**
+	 * Creates the transformer using the default quick-auth template resource.
+	 *
+	 * @param swaggerUiConfigProperties swagger UI configuration.
+	 * @param swaggerUiOAuthProperties swagger UI OAuth configuration.
+	 * @param swaggerWelcomeCommon common Swagger UI helper.
+	 * @param objectMapperProvider Jackson object mapper provider.
+	 */
 	QuickAuthSwaggerIndexTransformer(
 			SwaggerUiConfigProperties swaggerUiConfigProperties,
 			SwaggerUiOAuthProperties swaggerUiOAuthProperties,
@@ -34,6 +45,15 @@ final class QuickAuthSwaggerIndexTransformer extends SwaggerIndexPageTransformer
 				objectMapperProvider, new ClassPathResource(QUICK_AUTH_TEMPLATE_PATH));
 	}
 
+	/**
+	 * Creates the transformer with a custom template resource.
+	 *
+	 * @param swaggerUiConfigProperties swagger UI configuration.
+	 * @param swaggerUiOAuthProperties swagger UI OAuth configuration.
+	 * @param swaggerWelcomeCommon common Swagger UI helper.
+	 * @param objectMapperProvider Jackson object mapper provider.
+	 * @param templateResource template resource to inject.
+	 */
 	QuickAuthSwaggerIndexTransformer(
 			SwaggerUiConfigProperties swaggerUiConfigProperties,
 			SwaggerUiOAuthProperties swaggerUiOAuthProperties,
@@ -44,6 +64,15 @@ final class QuickAuthSwaggerIndexTransformer extends SwaggerIndexPageTransformer
 		this.templateResource = templateResource;
 	}
 
+	/**
+	 * Injects the quick-auth template and assets into the Swagger UI index page.
+	 *
+	 * @param request HTTP request.
+	 * @param resource original resource.
+	 * @param chain resource transformer chain.
+	 * @return transformed resource.
+	 * @throws IOException when resources cannot be read.
+	 */
 	@Override
 	public Resource transform(HttpServletRequest request, Resource resource, ResourceTransformerChain chain)
 			throws IOException {
@@ -69,6 +98,12 @@ final class QuickAuthSwaggerIndexTransformer extends SwaggerIndexPageTransformer
 		return new TransformedResource(transformed, updated.getBytes(StandardCharsets.UTF_8));
 	}
 
+	/**
+	 * Loads the quick-auth HTML snippet from the template resource.
+	 *
+	 * @return template contents, or empty string if missing.
+	 * @throws IOException when the template cannot be read.
+	 */
 	private String loadQuickAuthTemplate() throws IOException {
 		if (templateResource == null || !templateResource.exists()) {
 			return "";

@@ -28,6 +28,9 @@ public class AuditServiceImpl implements AuditService {
 	private final TaskAuditDao taskAuditDao;
 	private final TaskRunAuditDao taskRunAuditDao;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void recordAgentAction(Long agentId, AuditAction action) {
 		AuditActor actor = currentActor();
@@ -40,6 +43,9 @@ public class AuditServiceImpl implements AuditService {
 		agentAuditDao.save(audit);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void recordTaskAction(Long taskId, AuditAction action) {
 		AuditActor actor = currentActor();
@@ -52,6 +58,9 @@ public class AuditServiceImpl implements AuditService {
 		taskAuditDao.save(audit);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void recordTaskRunAction(Long taskRunId, AuditAction action, String status) {
 		AuditActor actor = currentActor();
@@ -65,6 +74,11 @@ public class AuditServiceImpl implements AuditService {
 		taskRunAuditDao.save(audit);
 	}
 
+	/**
+	 * Resolves the current authenticated actor for audit purposes.
+	 *
+	 * @return audit actor information.
+	 */
 	private AuditActor currentActor() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication instanceof JwtAuthenticationToken token) {
@@ -83,6 +97,13 @@ public class AuditServiceImpl implements AuditService {
 		return new AuditActor(null, null, MDC.get(RequestIdFilter.REQUEST_ID_MDC_KEY));
 	}
 
+	/**
+	 * Snapshot of the current actor identity for audit logging.
+	 *
+	 * @param userId user identifier.
+	 * @param username username.
+	 * @param requestId request correlation id.
+	 */
 	private record AuditActor(Long userId, String username, String requestId) {
 	}
 }

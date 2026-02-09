@@ -40,6 +40,9 @@ public class TaskServiceImpl implements TaskService {
 	private final AgentDao agentDao;
 	private final AuditService auditService;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional(readOnly = true)
 	@Override
 	public List<TaskResponseDto> listTasks(Pageable pageable, Long afterId) {
@@ -66,6 +69,9 @@ public class TaskServiceImpl implements TaskService {
 		return results;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional
 	@Override
 	public TaskResponseDto createTask(CreateTaskRequestDto request) {
@@ -79,12 +85,18 @@ public class TaskServiceImpl implements TaskService {
 		return toResponse(saved);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional(readOnly = true)
 	@Override
 	public TaskResponseDto getTask(long id) {
 		return toResponse(findTask(id));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional
 	@Override
 	public TaskResponseDto updateTask(long id, UpdateTaskRequestDto request) {
@@ -97,6 +109,9 @@ public class TaskServiceImpl implements TaskService {
 		return toResponse(task);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional
 	@Override
 	public void deleteTask(long id) {
@@ -111,11 +126,23 @@ public class TaskServiceImpl implements TaskService {
 		log.info("Soft deleted task id={}", task.getId());
 	}
 
+	/**
+	 * Loads an active task or throws when missing.
+	 *
+	 * @param id task identifier.
+	 * @return active task entity.
+	 */
 	private TaskEntity findTask(long id) {
 		return taskDao.findByIdAndDeletedAtIsNull(id)
 				.orElseThrow(() -> new NotFoundException("Task not found: " + id));
 	}
 
+	/**
+	 * Resolves supported agents and validates the id set.
+	 *
+	 * @param agentIds candidate agent identifiers.
+	 * @return resolved agents.
+	 */
 	private Set<AgentEntity> resolveAgents(Set<Long> agentIds) {
 		Set<Long> ids = new HashSet<>(agentIds);
 		List<AgentEntity> agents = agentDao.findAllByIdInAndDeletedAtIsNull(ids);
@@ -127,6 +154,13 @@ public class TaskServiceImpl implements TaskService {
 		return new HashSet<>(agents);
 	}
 
+	/**
+	 * Collects supported agent ids from both legacy and new payload fields.
+	 *
+	 * @param supportedAgentIds set of agent ids.
+	 * @param supportedAgentId single agent id.
+	 * @return combined id set.
+	 */
 	private Set<Long> collectAgentIds(Set<Long> supportedAgentIds, Long supportedAgentId) {
 		Set<Long> ids = supportedAgentIds == null ? new HashSet<>() : new HashSet<>(supportedAgentIds);
 		if (supportedAgentId != null) {
@@ -135,6 +169,12 @@ public class TaskServiceImpl implements TaskService {
 		return ids;
 	}
 
+	/**
+	 * Maps a task entity to a response DTO.
+	 *
+	 * @param task task entity.
+	 * @return response DTO.
+	 */
 	private TaskResponseDto toResponse(TaskEntity task) {
 		Set<Long> supportedAgentIds = task.getSupportedAgents().stream()
 				.map(AgentEntity::getId)

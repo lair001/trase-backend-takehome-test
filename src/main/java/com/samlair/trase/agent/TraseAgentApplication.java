@@ -11,6 +11,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class TraseAgentApplication {
 
+	/**
+	 * Bootstraps the Spring application.
+	 *
+	 * @param args command line arguments.
+	 */
 	public static void main(String[] args) {
 		SpringApplication.run(TraseAgentApplication.class, args);
 	}

@@ -33,6 +33,9 @@ public class AgentServiceImpl implements AgentService {
 	private final AgentDao agentDao;
 	private final AuditService auditService;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional(readOnly = true)
 	@Override
 	public List<AgentResponseDto> listAgents(Pageable pageable, Long afterId) {
@@ -46,6 +49,9 @@ public class AgentServiceImpl implements AgentService {
 				.toList();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional
 	@Override
 	public AgentResponseDto createAgent(CreateAgentRequestDto request) {
@@ -59,12 +65,18 @@ public class AgentServiceImpl implements AgentService {
 		return toResponse(saved);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional(readOnly = true)
 	@Override
 	public AgentResponseDto getAgent(long id) {
 		return toResponse(findAgent(id));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional
 	@Override
 	public AgentResponseDto updateAgent(long id, UpdateAgentRequestDto request) {
@@ -77,6 +89,9 @@ public class AgentServiceImpl implements AgentService {
 		return toResponse(agent);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional
 	@Override
 	public void deleteAgent(long id) {
@@ -91,15 +106,33 @@ public class AgentServiceImpl implements AgentService {
 		log.info("Soft deleted agent id={}", agent.getId());
 	}
 
+	/**
+	 * Loads an active agent or throws when missing.
+	 *
+	 * @param id agent identifier.
+	 * @return active agent entity.
+	 */
 	private AgentEntity findAgent(long id) {
 		return agentDao.findByIdAndDeletedAtIsNull(id)
 				.orElseThrow(() -> new NotFoundException("Agent not found: " + id));
 	}
 
+	/**
+	 * Maps an entity to a response DTO.
+	 *
+	 * @param agent agent entity.
+	 * @return response DTO.
+	 */
 	private AgentResponseDto toResponse(AgentEntity agent) {
 		return new AgentResponseDto(agent.getId(), agent.getName(), agent.getDescription());
 	}
 
+	/**
+	 * Ensures the agent name is unique among active agents.
+	 *
+	 * @param name candidate agent name.
+	 * @param existingId optional id to exclude from uniqueness check.
+	 */
 	private void assertUniqueName(String name, Long existingId) {
 		boolean exists = existingId == null
 				? agentDao.existsByNameAndDeletedAtIsNull(name)

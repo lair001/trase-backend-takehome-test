@@ -44,6 +44,13 @@ public class TaskController {
 
 	private final TaskService taskService;
 
+	/**
+	 * Lists tasks with optional keyset or offset pagination.
+	 *
+	 * @param afterId optional keyset cursor.
+	 * @param pageable paging configuration.
+	 * @return list of tasks.
+	 */
 	@GetMapping
 	@Operation(
 			summary = "List tasks",
@@ -74,6 +81,12 @@ public class TaskController {
 		return taskService.listTasks(pageable, afterId);
 	}
 
+	/**
+	 * Creates a new task.
+	 *
+	 * @param request task payload.
+	 * @return created task response.
+	 */
 	@PostMapping
 	@Operation(
 			summary = "Create task",
@@ -102,12 +115,25 @@ public class TaskController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(taskService.createTask(request));
 	}
 
+	/**
+	 * Retrieves a single task.
+	 *
+	 * @param id task identifier.
+	 * @return task response.
+	 */
 	@GetMapping("/{id}")
 	@Operation(summary = "Get task", description = "Roles: ADMIN, OPERATOR, RUNNER, READER.")
 	public TaskResponseDto getTask(@PathVariable long id) {
 		return taskService.getTask(id);
 	}
 
+	/**
+	 * Updates an existing task.
+	 *
+	 * @param id task identifier.
+	 * @param request updated task payload.
+	 * @return updated task response.
+	 */
 	@PutMapping("/{id}")
 	@Operation(summary = "Update task", description = "Roles: ADMIN, OPERATOR.")
 	public TaskResponseDto updateTask(@PathVariable long id, @Valid @RequestBody UpdateTaskRequestDto request) {
@@ -115,6 +141,12 @@ public class TaskController {
 		return taskService.updateTask(id, request);
 	}
 
+	/**
+	 * Soft deletes a task.
+	 *
+	 * @param id task identifier.
+	 * @return no-content response.
+	 */
 	@DeleteMapping("/{id}")
 	@Operation(summary = "Delete task", description = "Roles: ADMIN, OPERATOR.")
 	public ResponseEntity<Void> deleteTask(@PathVariable long id) {
