@@ -10,6 +10,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.verify;
 
+/**
+ * Unit tests for TokenRevocationCleanupJobImplUnitTest.
+ */
 @ExtendWith(MockitoExtension.class)
 class TokenRevocationCleanupJobImplUnitTest {
 
@@ -19,6 +22,9 @@ class TokenRevocationCleanupJobImplUnitTest {
 	@InjectMocks
 	private TokenRevocationCleanupJobImpl job;
 
+	/**
+	 * Verifies cleanup expired tokens delegates to service.
+	 */
 	@Test
 	void cleanupExpiredTokensDelegatesToService() {
 		job.cleanupExpiredTokens();

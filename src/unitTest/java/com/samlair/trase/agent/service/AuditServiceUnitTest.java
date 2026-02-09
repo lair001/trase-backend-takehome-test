@@ -25,6 +25,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 
+/**
+ * Unit tests for AuditServiceUnitTest.
+ */
 @ExtendWith(MockitoExtension.class)
 class AuditServiceUnitTest {
 
@@ -40,12 +43,18 @@ class AuditServiceUnitTest {
 	@InjectMocks
 	private AuditServiceImpl auditService;
 
+	/**
+	 * Tears down test fixtures.
+	 */
 	@AfterEach
 	void tearDown() {
 		SecurityContextHolder.clearContext();
 		MDC.remove(RequestIdFilter.REQUEST_ID_MDC_KEY);
 	}
 
+	/**
+	 * Verifies record agent action captures numeric user id.
+	 */
 	@Test
 	void recordAgentActionCapturesNumericUserId() {
 		MDC.put(RequestIdFilter.REQUEST_ID_MDC_KEY, "req-1");
@@ -69,6 +78,9 @@ class AuditServiceUnitTest {
 		assertEquals("req-1", audit.getRequestId());
 	}
 
+	/**
+	 * Verifies record agent action captures string user id.
+	 */
 	@Test
 	void recordAgentActionCapturesStringUserId() {
 		Jwt jwt = Jwt.withTokenValue("token")
@@ -90,6 +102,9 @@ class AuditServiceUnitTest {
 		assertEquals("reader", audit.getActorUsername());
 	}
 
+	/**
+	 * Verifies record agent action handles anonymous.
+	 */
 	@Test
 	void recordAgentActionHandlesAnonymous() {
 		auditService.recordAgentAction(12L, AuditAction.DELETE);

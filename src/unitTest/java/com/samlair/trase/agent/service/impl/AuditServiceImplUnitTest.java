@@ -26,6 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 
+/**
+ * Unit tests for AuditServiceImplUnitTest.
+ */
 @ExtendWith(MockitoExtension.class)
 class AuditServiceImplUnitTest {
 
@@ -41,12 +44,18 @@ class AuditServiceImplUnitTest {
 	@InjectMocks
 	private AuditServiceImpl auditService;
 
+	/**
+	 * Tears down test fixtures.
+	 */
 	@AfterEach
 	void tearDown() {
 		SecurityContextHolder.clearContext();
 		MDC.remove(RequestIdFilter.REQUEST_ID_MDC_KEY);
 	}
 
+	/**
+	 * Verifies record task action captures user.
+	 */
 	@Test
 	void recordTaskActionCapturesUser() {
 		Jwt jwt = Jwt.withTokenValue("token")
@@ -68,6 +77,9 @@ class AuditServiceImplUnitTest {
 		assertEquals("ops", audit.getActorUsername());
 	}
 
+	/**
+	 * Verifies record task action handles missing user id.
+	 */
 	@Test
 	void recordTaskActionHandlesMissingUserId() {
 		Jwt jwt = Jwt.withTokenValue("token")
@@ -87,6 +99,9 @@ class AuditServiceImplUnitTest {
 		assertNull(audit.getActorUserId());
 	}
 
+	/**
+	 * Verifies record task run action captures status.
+	 */
 	@Test
 	void recordTaskRunActionCapturesStatus() {
 		Jwt jwt = Jwt.withTokenValue("token")
@@ -108,6 +123,9 @@ class AuditServiceImplUnitTest {
 		assertEquals("COMPLETED", audit.getStatus());
 	}
 
+	/**
+	 * Verifies record agent action handles anonymous.
+	 */
 	@Test
 	void recordAgentActionHandlesAnonymous() {
 		auditService.recordAgentAction(3L, AuditAction.CREATE);

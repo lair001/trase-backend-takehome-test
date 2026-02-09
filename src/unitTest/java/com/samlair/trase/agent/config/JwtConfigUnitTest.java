@@ -14,8 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Unit tests for JwtConfigUnitTest.
+ */
 class JwtConfigUnitTest {
 
+	/**
+	 * Verifies loads keys and builds jwt components.
+	 */
 	@Test
 	void loadsKeysAndBuildsJwtComponents() {
 		JwtConfig config = new JwtConfig();
@@ -32,6 +38,9 @@ class JwtConfigUnitTest {
 		assertTrue(passwordEncoder.matches("pw", passwordEncoder.encode("pw")));
 	}
 
+	/**
+	 * Verifies jwt public key throws when resource missing.
+	 */
 	@Test
 	void jwtPublicKeyThrowsWhenResourceMissing() {
 		JwtConfig config = new JwtConfig();
@@ -39,6 +48,9 @@ class JwtConfigUnitTest {
 				() -> config.jwtPublicKey(new ClassPathResource("keys/missing.pem")));
 	}
 
+	/**
+	 * Verifies jwt public key throws when invalid key.
+	 */
 	@Test
 	void jwtPublicKeyThrowsWhenInvalidKey() {
 		JwtConfig config = new JwtConfig();
@@ -47,6 +59,9 @@ class JwtConfigUnitTest {
 		assertThrows(IllegalStateException.class, () -> config.jwtPublicKey(resource));
 	}
 
+	/**
+	 * Verifies jwt private key throws when invalid key.
+	 */
 	@Test
 	void jwtPrivateKeyThrowsWhenInvalidKey() {
 		JwtConfig config = new JwtConfig();

@@ -18,8 +18,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 		"resilience4j.ratelimiter.instances.api.limit-refresh-period=1h",
 		"resilience4j.ratelimiter.instances.api.timeout-duration=0"
 })
+/**
+ * Integration tests for RateLimitingIntTest.
+ */
 class RateLimitingIntTest extends IntegrationTestBase {
 
+	/**
+	 * Verifies rate limit returns 429 after limit exceeded.
+	 */
 	@Test
 	void rateLimitReturns429AfterLimitExceeded() {
 		ResponseEntity<List<AgentResponseDto>> first = restClient.get()

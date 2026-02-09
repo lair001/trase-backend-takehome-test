@@ -32,6 +32,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for TaskServiceImplUnitTest.
+ */
 @ExtendWith(MockitoExtension.class)
 class TaskServiceImplUnitTest {
 
@@ -47,6 +50,9 @@ class TaskServiceImplUnitTest {
 	@InjectMocks
 	private TaskServiceImpl taskService;
 
+	/**
+	 * Verifies create task rejects unknown agent ids.
+	 */
 	@Test
 	void createTaskRejectsUnknownAgentIds() {
 		AgentEntity agent = new AgentEntity();
@@ -64,6 +70,9 @@ class TaskServiceImplUnitTest {
 		assertTrue(ex.getMessage().contains("Unknown agent ids"));
 	}
 
+	/**
+	 * Verifies update task throws when missing.
+	 */
 	@Test
 	void updateTaskThrowsWhenMissing() {
 		when(taskDao.findByIdAndDeletedAtIsNull(123L)).thenReturn(Optional.empty());
@@ -73,6 +82,9 @@ class TaskServiceImplUnitTest {
 		assertTrue(ex.getMessage().contains("Task not found"));
 	}
 
+	/**
+	 * Verifies delete task marks deleted.
+	 */
 	@Test
 	void deleteTaskMarksDeleted() {
 		TaskEntity task = new TaskEntity();
@@ -85,6 +97,9 @@ class TaskServiceImplUnitTest {
 		verify(taskDao).save(task);
 	}
 
+	/**
+	 * Verifies delete task is idempotent when already deleted.
+	 */
 	@Test
 	void deleteTaskIsIdempotentWhenAlreadyDeleted() {
 		TaskEntity task = new TaskEntity();
@@ -97,6 +112,9 @@ class TaskServiceImplUnitTest {
 		verify(taskDao, never()).save(task);
 	}
 
+	/**
+	 * Verifies delete task throws when missing.
+	 */
 	@Test
 	void deleteTaskThrowsWhenMissing() {
 		when(taskDao.findById(404L)).thenReturn(Optional.empty());
@@ -106,6 +124,9 @@ class TaskServiceImplUnitTest {
 		assertTrue(ex.getMessage().contains("Task not found"));
 	}
 
+	/**
+	 * Verifies list tasks maps supported agent ids in page order.
+	 */
 	@Test
 	void listTasksMapsSupportedAgentIdsInPageOrder() {
 		AgentEntity agentA = new AgentEntity();
@@ -144,6 +165,9 @@ class TaskServiceImplUnitTest {
 		verify(taskDao).findAllByIdInAndDeletedAtIsNull(List.of(21L, 22L));
 	}
 
+	/**
+	 * Verifies list tasks handles duplicate entities from secondary query.
+	 */
 	@Test
 	void listTasksHandlesDuplicateEntitiesFromSecondaryQuery() {
 		AgentEntity agent = new AgentEntity();
@@ -178,6 +202,9 @@ class TaskServiceImplUnitTest {
 		assertEquals(22L, response.get(1).id());
 	}
 
+	/**
+	 * Verifies list tasks skips missing entities from secondary query.
+	 */
 	@Test
 	void listTasksSkipsMissingEntitiesFromSecondaryQuery() {
 		AgentEntity agent = new AgentEntity();
@@ -206,6 +233,9 @@ class TaskServiceImplUnitTest {
 		assertEquals(21L, response.get(0).id());
 	}
 
+	/**
+	 * Verifies list tasks supports after id keyset.
+	 */
 	@Test
 	void listTasksSupportsAfterIdKeyset() {
 		AgentEntity agent = new AgentEntity();
@@ -234,6 +264,9 @@ class TaskServiceImplUnitTest {
 		verify(taskDao).findAllByIdInAndDeletedAtIsNull(List.of(41L));
 	}
 
+	/**
+	 * Verifies get task returns response.
+	 */
 	@Test
 	void getTaskReturnsResponse() {
 		TaskEntity task = new TaskEntity();
@@ -252,6 +285,9 @@ class TaskServiceImplUnitTest {
 		assertNull(response.supportedAgentId());
 	}
 
+	/**
+	 * Verifies update task updates fields.
+	 */
 	@Test
 	void updateTaskUpdatesFields() {
 		AgentEntity agent = new AgentEntity();
@@ -277,6 +313,9 @@ class TaskServiceImplUnitTest {
 		assertEquals(99L, response.supportedAgentId());
 	}
 
+	/**
+	 * Verifies create task accepts single supported agent id.
+	 */
 	@Test
 	void createTaskAcceptsSingleSupportedAgentId() {
 		AgentEntity agent = new AgentEntity();

@@ -22,6 +22,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for AuthControllerUnitTest.
+ */
 @ExtendWith(MockitoExtension.class)
 class AuthControllerUnitTest {
 
@@ -34,11 +37,17 @@ class AuthControllerUnitTest {
 	@InjectMocks
 	private AuthController authController;
 
+	/**
+	 * Tears down test fixtures.
+	 */
 	@AfterEach
 	void tearDown() {
 		SecurityContextHolder.clearContext();
 	}
 
+	/**
+	 * Verifies login delegates to service.
+	 */
 	@Test
 	void loginDelegatesToService() {
 		LoginRequestDto request = new LoginRequestDto("user", "pass");
@@ -51,6 +60,9 @@ class AuthControllerUnitTest {
 		assertEquals(response, result);
 	}
 
+	/**
+	 * Verifies logout revokes when jwt present.
+	 */
 	@Test
 	void logoutRevokesWhenJwtPresent() {
 		Jwt jwt = Jwt.withTokenValue("token")
@@ -67,6 +79,9 @@ class AuthControllerUnitTest {
 		assertEquals(204, response.getStatusCode().value());
 	}
 
+	/**
+	 * Verifies logout noops when no auth.
+	 */
 	@Test
 	void logoutNoopsWhenNoAuth() {
 		ResponseEntity<Void> response = authController.logout();
@@ -75,6 +90,9 @@ class AuthControllerUnitTest {
 		assertEquals(204, response.getStatusCode().value());
 	}
 
+	/**
+	 * Verifies logout noops when auth not jwt.
+	 */
 	@Test
 	void logoutNoopsWhenAuthNotJwt() {
 		SecurityContextHolder.getContext().setAuthentication(null);

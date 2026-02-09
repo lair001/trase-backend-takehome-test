@@ -26,8 +26,14 @@ import org.springframework.web.client.RestClient;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * Integration tests for AuditControllerIntTest.
+ */
 class AuditControllerIntTest extends IntegrationTestBase {
 
+	/**
+	 * Verifies list agent audits returns records for admin.
+	 */
 	@Test
 	void listAgentAuditsReturnsRecordsForAdmin() {
 		AgentResponseDto agent = restClient.post()
@@ -52,6 +58,9 @@ class AuditControllerIntTest extends IntegrationTestBase {
 				});
 	}
 
+	/**
+	 * Verifies list task audits returns records for admin.
+	 */
 	@Test
 	void listTaskAuditsReturnsRecordsForAdmin() {
 		AgentResponseDto agent = createAgent("Agent A");
@@ -71,6 +80,9 @@ class AuditControllerIntTest extends IntegrationTestBase {
 				});
 	}
 
+	/**
+	 * Verifies list task run audits returns records for admin.
+	 */
 	@Test
 	void listTaskRunAuditsReturnsRecordsForAdmin() {
 		AgentResponseDto agent = createAgent("Agent A");
@@ -99,6 +111,9 @@ class AuditControllerIntTest extends IntegrationTestBase {
 				});
 	}
 
+	/**
+	 * Verifies reader cannot access audits.
+	 */
 	@Test
 	void readerCannotAccessAudits() {
 		String baseUrl = "http://localhost:" + getPort();
@@ -127,6 +142,9 @@ class AuditControllerIntTest extends IntegrationTestBase {
 		assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
 	}
 
+	/**
+	 * Helper for create agent.
+	 */
 	private AgentResponseDto createAgent(String name) {
 		return restClient.post()
 				.uri("/agents")
@@ -136,6 +154,9 @@ class AuditControllerIntTest extends IntegrationTestBase {
 				.getBody();
 	}
 
+	/**
+	 * Helper for create task.
+	 */
 	private TaskResponseDto createTask(String title, Set<Long> supportedAgents) {
 		return restClient.post()
 				.uri("/tasks")

@@ -13,8 +13,14 @@ import org.springframework.web.client.RestClient;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * Integration tests for AuthControllerIntTest.
+ */
 class AuthControllerIntTest extends IntegrationTestBase {
 
+	/**
+	 * Verifies login returns jwt.
+	 */
 	@Test
 	void loginReturnsJwt() {
 		RestClient rawClient = RestClient.builder()
@@ -34,6 +40,9 @@ class AuthControllerIntTest extends IntegrationTestBase {
 		assertThat(response.roles()).contains("ADMIN");
 	}
 
+	/**
+	 * Verifies reader cannot create agent.
+	 */
 	@Test
 	void readerCannotCreateAgent() {
 		RestClient rawClient = RestClient.builder()
@@ -62,6 +71,9 @@ class AuthControllerIntTest extends IntegrationTestBase {
 		assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
 	}
 
+	/**
+	 * Verifies invalid login returns unauthorized.
+	 */
 	@Test
 	void invalidLoginReturnsUnauthorized() {
 		RestClient rawClient = RestClient.builder()
@@ -77,6 +89,9 @@ class AuthControllerIntTest extends IntegrationTestBase {
 		assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
 	}
 
+	/**
+	 * Verifies revoked token is rejected.
+	 */
 	@Test
 	void revokedTokenIsRejected() {
 		RestClient rawClient = RestClient.builder()

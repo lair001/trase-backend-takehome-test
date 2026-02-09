@@ -10,8 +10,14 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+/**
+ * Unit tests for TraseAgentApplicationUnitTest.
+ */
 class TraseAgentApplicationUnitTest {
 
+	/**
+	 * Verifies main delegates to spring application run.
+	 */
 	@Test
 	void mainDelegatesToSpringApplicationRun() {
 		try (MockedStatic<SpringApplication> springApplication = mockStatic(SpringApplication.class)) {

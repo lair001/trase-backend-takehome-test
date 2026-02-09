@@ -13,8 +13,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * UI tests for SwaggerUiE2eTest.
+ */
 class SwaggerUiE2eTest extends IntegrationTestBase {
 
+	/**
+	 * Verifies quick auth dropdown authorizes and executes request.
+	 */
 	@Test
 	void quickAuthDropdownAuthorizesAndExecutesRequest() {
 		try (Playwright playwright = Playwright.create()) {

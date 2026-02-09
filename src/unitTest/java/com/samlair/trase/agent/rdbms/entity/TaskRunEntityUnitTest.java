@@ -7,8 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+/**
+ * Unit tests for TaskRunEntityUnitTest.
+ */
 class TaskRunEntityUnitTest {
 
+	/**
+	 * Verifies on create sets started at when missing.
+	 */
 	@Test
 	void onCreateSetsStartedAtWhenMissing() {
 		TestTaskRunEntity entity = new TestTaskRunEntity();
@@ -19,6 +25,9 @@ class TaskRunEntityUnitTest {
 		assertNotNull(entity.getStartedAt());
 	}
 
+	/**
+	 * Verifies on create does not override started at when present.
+	 */
 	@Test
 	void onCreateDoesNotOverrideStartedAtWhenPresent() {
 		TestTaskRunEntity entity = new TestTaskRunEntity();
@@ -31,6 +40,9 @@ class TaskRunEntityUnitTest {
 	}
 
 	private static final class TestTaskRunEntity extends TaskRunEntity {
+		/**
+		 * Helper for trigger create.
+		 */
 		void triggerCreate() {
 			super.onCreate();
 		}

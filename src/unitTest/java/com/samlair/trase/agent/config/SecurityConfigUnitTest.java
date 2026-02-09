@@ -11,8 +11,14 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Unit tests for SecurityConfigUnitTest.
+ */
 class SecurityConfigUnitTest {
 
+	/**
+	 * Verifies extract authorities maps roles.
+	 */
 	@Test
 	void extractAuthoritiesMapsRoles() throws Exception {
 		SecurityConfig config = new SecurityConfig();
@@ -33,6 +39,9 @@ class SecurityConfigUnitTest {
 		assertEquals(Set.of("ROLE_ADMIN", "ROLE_READER"), values);
 	}
 
+	/**
+	 * Verifies extract authorities returns empty when missing.
+	 */
 	@Test
 	void extractAuthoritiesReturnsEmptyWhenMissing() throws Exception {
 		SecurityConfig config = new SecurityConfig();

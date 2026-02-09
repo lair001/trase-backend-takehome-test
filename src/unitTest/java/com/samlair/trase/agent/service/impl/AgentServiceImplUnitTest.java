@@ -27,6 +27,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for AgentServiceImplUnitTest.
+ */
 @ExtendWith(MockitoExtension.class)
 class AgentServiceImplUnitTest {
 
@@ -39,6 +42,9 @@ class AgentServiceImplUnitTest {
 	@InjectMocks
 	private AgentServiceImpl agentService;
 
+	/**
+	 * Verifies get agent throws when missing.
+	 */
 	@Test
 	void getAgentThrowsWhenMissing() {
 		when(agentDao.findByIdAndDeletedAtIsNull(42L)).thenReturn(Optional.empty());
@@ -46,6 +52,9 @@ class AgentServiceImplUnitTest {
 		assertTrue(ex.getMessage().contains("Agent not found"));
 	}
 
+	/**
+	 * Verifies update agent throws when missing.
+	 */
 	@Test
 	void updateAgentThrowsWhenMissing() {
 		when(agentDao.findByIdAndDeletedAtIsNull(100L)).thenReturn(Optional.empty());
@@ -55,6 +64,9 @@ class AgentServiceImplUnitTest {
 		assertTrue(ex.getMessage().contains("Agent not found"));
 	}
 
+	/**
+	 * Verifies create agent rejects duplicate name.
+	 */
 	@Test
 	void createAgentRejectsDuplicateName() {
 		when(agentDao.existsByNameAndDeletedAtIsNull("Agent")).thenReturn(true);
@@ -66,6 +78,9 @@ class AgentServiceImplUnitTest {
 		verify(agentDao, never()).save(org.mockito.ArgumentMatchers.any(AgentEntity.class));
 	}
 
+	/**
+	 * Verifies delete agent marks deleted.
+	 */
 	@Test
 	void deleteAgentMarksDeleted() {
 		AgentEntity agent = new AgentEntity();
@@ -78,6 +93,9 @@ class AgentServiceImplUnitTest {
 		verify(agentDao).save(agent);
 	}
 
+	/**
+	 * Verifies delete agent is idempotent when already deleted.
+	 */
 	@Test
 	void deleteAgentIsIdempotentWhenAlreadyDeleted() {
 		AgentEntity agent = new AgentEntity();
@@ -90,6 +108,9 @@ class AgentServiceImplUnitTest {
 		verify(agentDao, never()).save(agent);
 	}
 
+	/**
+	 * Verifies delete agent throws when missing.
+	 */
 	@Test
 	void deleteAgentThrowsWhenMissing() {
 		when(agentDao.findById(404L)).thenReturn(Optional.empty());
@@ -99,6 +120,9 @@ class AgentServiceImplUnitTest {
 		assertTrue(ex.getMessage().contains("Agent not found"));
 	}
 
+	/**
+	 * Verifies list agents maps response.
+	 */
 	@Test
 	void listAgentsMapsResponse() {
 		AgentEntity agent = new AgentEntity();
@@ -120,6 +144,9 @@ class AgentServiceImplUnitTest {
 		assertEquals("Desc", response.get(0).description());
 	}
 
+	/**
+	 * Verifies get agent returns response.
+	 */
 	@Test
 	void getAgentReturnsResponse() {
 		AgentEntity agent = new AgentEntity();

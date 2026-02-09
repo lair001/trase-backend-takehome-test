@@ -16,6 +16,9 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.RestClient;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+/**
+ * Integration tests for IntegrationTestBase.
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("int-test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -43,6 +46,9 @@ public abstract class IntegrationTestBase {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
+	/**
+	 * Helper for register data source properties.
+	 */
 	@DynamicPropertySource
 	static void registerDataSourceProperties(DynamicPropertyRegistry registry) {
 		if (!POSTGRES.isRunning()) {
@@ -53,6 +59,9 @@ public abstract class IntegrationTestBase {
 		registry.add("spring.datasource.password", POSTGRES::getPassword);
 	}
 
+	/**
+	 * Sets up test fixtures.
+	 */
 	@BeforeEach
 	void cleanDatabase() {
 		new TestDatabaseCleaner(jdbcTemplate).clean();
@@ -73,6 +82,9 @@ public abstract class IntegrationTestBase {
 				.build();
 	}
 
+	/**
+	 * Helper for get port.
+	 */
 	protected int getPort() {
 		return port;
 	}

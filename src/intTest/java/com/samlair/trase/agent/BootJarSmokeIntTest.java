@@ -24,6 +24,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Integration tests for BootJarSmokeIntTest.
+ */
 @Testcontainers
 class BootJarSmokeIntTest {
 
@@ -35,6 +38,9 @@ class BootJarSmokeIntTest {
 
 	private static HttpClient httpClient;
 
+	/**
+	 * Sets up test fixtures.
+	 */
 	@BeforeAll
 	static void startDependencies() {
 		httpClient = HttpClient.newBuilder()
@@ -42,11 +48,17 @@ class BootJarSmokeIntTest {
 				.build();
 	}
 
+	/**
+	 * Tears down test fixtures.
+	 */
 	@AfterAll
 	static void stopDependencies() {
 		POSTGRES.stop();
 	}
 
+	/**
+	 * Verifies boot jar starts and runs migrations.
+	 */
 	@Test
 	void bootJarStartsAndRunsMigrations() throws Exception {
 		int port = findFreePort();
@@ -66,12 +78,18 @@ class BootJarSmokeIntTest {
 		}
 	}
 
+	/**
+	 * Helper for find free port.
+	 */
 	private static int findFreePort() throws IOException {
 		try (ServerSocket socket = new ServerSocket(0)) {
 			return socket.getLocalPort();
 		}
 	}
 
+	/**
+	 * Helper for find boot jar.
+	 */
 	private static Path findBootJar() throws IOException {
 		Path libsDir = Path.of("build", "libs");
 		try (var stream = Files.list(libsDir)) {
@@ -82,6 +100,9 @@ class BootJarSmokeIntTest {
 		}
 	}
 
+	/**
+	 * Helper for start boot jar.
+	 */
 	private static Process startBootJar(Path jarPath, int port) throws IOException {
 		ProcessBuilder builder = new ProcessBuilder(List.of(
 				"java",
@@ -98,6 +119,9 @@ class BootJarSmokeIntTest {
 		return builder.start();
 	}
 
+	/**
+	 * Helper for stream logs.
+	 */
 	private static Thread streamLogs(Process process, StringBuilder output) {
 		Thread thread = new Thread(() -> {
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
@@ -114,6 +138,9 @@ class BootJarSmokeIntTest {
 		return thread;
 	}
 
+	/**
+	 * Helper for wait for healthy.
+	 */
 	private static void waitForHealthy(int port, StringBuilder output) throws Exception {
 		URI uri = URI.create("http://localhost:" + port + "/actuator/health");
 		long deadline = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(45);
@@ -135,6 +162,9 @@ class BootJarSmokeIntTest {
 		throw new IllegalStateException("Boot jar did not become healthy:\n" + output);
 	}
 
+	/**
+	 * Helper for assert tables exist.
+	 */
 	private static void assertTablesExist() throws Exception {
 		try (var connection = DriverManager.getConnection(
 				POSTGRES.getJdbcUrl(),
@@ -148,12 +178,18 @@ class BootJarSmokeIntTest {
 		}
 	}
 
+	/**
+	 * Helper for exists.
+	 */
 	private static boolean exists(java.sql.Statement statement, String table) throws Exception {
 		try (var result = statement.executeQuery("SELECT to_regclass('" + table + "')")) {
 			return result.next() && result.getString(1) != null;
 		}
 	}
 
+	/**
+	 * Helper for changelog count.
+	 */
 	private static int changelogCount(java.sql.Statement statement) throws Exception {
 		try (var result = statement.executeQuery("SELECT COUNT(*) FROM databasechangelog")) {
 			result.next();

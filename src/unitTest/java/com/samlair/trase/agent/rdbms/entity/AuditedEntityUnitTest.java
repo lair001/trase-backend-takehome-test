@@ -7,8 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+/**
+ * Unit tests for AuditedEntityUnitTest.
+ */
 class AuditedEntityUnitTest {
 
+	/**
+	 * Verifies on create sets created and updated.
+	 */
 	@Test
 	void onCreateSetsCreatedAndUpdated() {
 		TestAuditedEntity entity = new TestAuditedEntity();
@@ -21,6 +27,9 @@ class AuditedEntityUnitTest {
 		assertNotNull(entity.getUpdatedAt());
 	}
 
+	/**
+	 * Verifies on update refreshes updated at.
+	 */
 	@Test
 	void onUpdateRefreshesUpdatedAt() {
 		TestAuditedEntity entity = new TestAuditedEntity();
@@ -32,10 +41,16 @@ class AuditedEntityUnitTest {
 	}
 
 	private static final class TestAuditedEntity extends AuditedEntity {
+		/**
+		 * Helper for trigger create.
+		 */
 		void triggerCreate() {
 			super.onCreate();
 		}
 
+		/**
+		 * Helper for trigger update.
+		 */
 		void triggerUpdate() {
 			super.onUpdate();
 		}

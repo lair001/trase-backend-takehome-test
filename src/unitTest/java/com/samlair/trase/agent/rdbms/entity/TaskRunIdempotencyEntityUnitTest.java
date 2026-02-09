@@ -6,8 +6,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+/**
+ * Unit tests for TaskRunIdempotencyEntityUnitTest.
+ */
 class TaskRunIdempotencyEntityUnitTest {
 
+	/**
+	 * Verifies on create sets timestamp when missing.
+	 */
 	@Test
 	void onCreateSetsTimestampWhenMissing() {
 		TaskRunIdempotencyEntity entity = new TaskRunIdempotencyEntity();
@@ -18,6 +24,9 @@ class TaskRunIdempotencyEntityUnitTest {
 		assertNotNull(entity.getCreatedAt());
 	}
 
+	/**
+	 * Verifies on create keeps timestamp when present.
+	 */
 	@Test
 	void onCreateKeepsTimestampWhenPresent() {
 		TaskRunIdempotencyEntity entity = new TaskRunIdempotencyEntity();

@@ -19,8 +19,14 @@ import org.springframework.web.client.HttpClientErrorException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * Integration tests for TaskRunControllerIntTest.
+ */
 class TaskRunControllerIntTest extends IntegrationTestBase {
 
+	/**
+	 * Verifies start task run returns not found for missing task.
+	 */
 	@Test
 	void startTaskRunReturnsNotFoundForMissingTask() {
 		Long agentId = createAgent("Agent A").id();
@@ -33,6 +39,9 @@ class TaskRunControllerIntTest extends IntegrationTestBase {
 		assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
 
+	/**
+	 * Verifies start task run returns not found for missing agent.
+	 */
 	@Test
 	void startTaskRunReturnsNotFoundForMissingAgent() {
 		Long agentId = createAgent("Agent A").id();
@@ -46,6 +55,9 @@ class TaskRunControllerIntTest extends IntegrationTestBase {
 		assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
 
+	/**
+	 * Verifies start task run rejects unsupported agent.
+	 */
 	@Test
 	void startTaskRunRejectsUnsupportedAgent() {
 		Long supportedAgentId = createAgent("Agent A").id();
@@ -60,6 +72,9 @@ class TaskRunControllerIntTest extends IntegrationTestBase {
 		assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 
+	/**
+	 * Verifies start task run honors idempotency key.
+	 */
 	@Test
 	void startTaskRunHonorsIdempotencyKey() {
 		Long agentId = createAgent("Agent A").id();
@@ -86,6 +101,9 @@ class TaskRunControllerIntTest extends IntegrationTestBase {
 		assertThat(second.id()).isEqualTo(first.id());
 	}
 
+	/**
+	 * Verifies list task runs filters by status.
+	 */
 	@Test
 	void listTaskRunsFiltersByStatus() {
 		Long agentId = createAgent("Agent A").id();
@@ -118,6 +136,9 @@ class TaskRunControllerIntTest extends IntegrationTestBase {
 		assertThat(allRuns.getBody()).hasSize(1);
 	}
 
+	/**
+	 * Verifies list task runs supports offset paging.
+	 */
 	@Test
 	void listTaskRunsSupportsOffsetPaging() {
 		Long agentId = createAgent("Agent A").id();
@@ -149,6 +170,9 @@ class TaskRunControllerIntTest extends IntegrationTestBase {
 		assertThat(page1.getBody().get(0).id()).isEqualTo(second.id());
 	}
 
+	/**
+	 * Verifies update task run status completes run.
+	 */
 	@Test
 	void updateTaskRunStatusCompletesRun() {
 		Long agentId = createAgent("Agent A").id();
@@ -174,6 +198,9 @@ class TaskRunControllerIntTest extends IntegrationTestBase {
 		assertThat(updated.completedAt()).isNotNull();
 	}
 
+	/**
+	 * Verifies update task run status rejects non running.
+	 */
 	@Test
 	void updateTaskRunStatusRejectsNonRunning() {
 		Long agentId = createAgent("Agent A").id();
@@ -210,6 +237,9 @@ class TaskRunControllerIntTest extends IntegrationTestBase {
 				.getBody();
 	}
 
+	/**
+	 * Helper for create task.
+	 */
 	private TaskResponseDto createTask(String title, Set<Long> supportedAgents) {
 		return restClient.post()
 				.uri("/tasks")

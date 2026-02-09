@@ -28,12 +28,18 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
+/**
+ * Unit tests for SwaggerUiCustomizationConfigTest.
+ */
 @SuppressWarnings("deprecation")
 class SwaggerUiCustomizationConfigTest {
 
 	@TempDir
 	Path tempDir;
 
+	/**
+	 * Verifies transform skips resources without index filename.
+	 */
 	@Test
 	void transformSkipsResourcesWithoutIndexFilename() throws Exception {
 		Resource resource = new NullFilenameResource("body");
@@ -41,6 +47,9 @@ class SwaggerUiCustomizationConfigTest {
 		assertSame(resource, transformed);
 	}
 
+	/**
+	 * Verifies transform skips non index html.
+	 */
 	@Test
 	void transformSkipsNonIndexHtml() throws Exception {
 		Path cssPath = tempDir.resolve("swagger-ui.css");
@@ -50,6 +59,9 @@ class SwaggerUiCustomizationConfigTest {
 		assertSame(resource, transformed);
 	}
 
+	/**
+	 * Verifies transform skips index without swagger ui placeholder.
+	 */
 	@Test
 	void transformSkipsIndexWithoutSwaggerUiPlaceholder() throws Exception {
 		Path indexPath = tempDir.resolve("index.html");
@@ -59,6 +71,9 @@ class SwaggerUiCustomizationConfigTest {
 		assertSame(resource, transformed);
 	}
 
+	/**
+	 * Verifies transform injects quick auth assets when template present.
+	 */
 	@Test
 	void transformInjectsQuickAuthAssetsWhenTemplatePresent() throws Exception {
 		Path indexPath = tempDir.resolve("index.html");
@@ -74,6 +89,9 @@ class SwaggerUiCustomizationConfigTest {
 		assertTrue(html.contains("/swagger-ui-extra/quick-auth.css"));
 	}
 
+	/**
+	 * Verifies transform skips injection when template missing.
+	 */
 	@Test
 	void transformSkipsInjectionWhenTemplateMissing() throws Exception {
 		Path indexPath = tempDir.resolve("index.html");
@@ -87,6 +105,9 @@ class SwaggerUiCustomizationConfigTest {
 		assertSame(resource, transformed);
 	}
 
+	/**
+	 * Verifies transform skips injection when template resource null.
+	 */
 	@Test
 	void transformSkipsInjectionWhenTemplateResourceNull() throws Exception {
 		Path indexPath = tempDir.resolve("index.html");
@@ -99,10 +120,16 @@ class SwaggerUiCustomizationConfigTest {
 		assertSame(resource, transformed);
 	}
 
+	/**
+	 * Helper for transformer.
+	 */
 	private QuickAuthSwaggerIndexTransformer transformer() {
 		return transformer(new ClassPathResource("static/swagger-ui-extra/quick-auth.html"));
 	}
 
+	/**
+	 * Helper for transformer.
+	 */
 	private QuickAuthSwaggerIndexTransformer transformer(Resource templateResource) {
 		SwaggerUiConfigProperties uiConfig = new SwaggerUiConfigProperties();
 		SwaggerUiOAuthProperties oauthConfig = new SwaggerUiOAuthProperties();
@@ -113,13 +140,22 @@ class SwaggerUiCustomizationConfigTest {
 				uiConfig, oauthConfig, swaggerWelcome, objectMapperProvider, templateResource);
 	}
 
+	/**
+	 * Helper for passthrough chain.
+	 */
 	private ResourceTransformerChain passthroughChain() {
 		return new ResourceTransformerChain() {
+			/**
+			 * Helper for get resolver chain.
+			 */
 			@Override
 			public org.springframework.web.servlet.resource.ResourceResolverChain getResolverChain() {
 				return null;
 			}
 
+			/**
+			 * Helper for transform.
+			 */
 			@Override
 			public Resource transform(HttpServletRequest request, Resource resource) {
 				return resource;
@@ -129,21 +165,33 @@ class SwaggerUiCustomizationConfigTest {
 
 	private static final class NoOpSwaggerWelcome extends SwaggerWelcomeCommon {
 
+		/**
+		 * Helper for no-op swagger welcome.
+		 */
 		private NoOpSwaggerWelcome(
 				SwaggerUiConfigProperties swaggerUiConfig,
 				SpringDocConfigProperties springDocConfigProperties) {
 			super(swaggerUiConfig, springDocConfigProperties);
 		}
 
+		/**
+		 * Helper for calculate UI root path.
+		 */
 		@Override
 		protected void calculateUiRootPath(SwaggerUiConfigParameters swaggerUiConfigParameters,
 				StringBuilder... stringBuilders) {
 		}
 
+		/**
+		 * Helper for build api doc url.
+		 */
 		@Override
 		protected void buildApiDocUrl(SwaggerUiConfigParameters swaggerUiConfigParameters) {
 		}
 
+		/**
+		 * Helper for build url with context path.
+		 */
 		@Override
 		protected String buildUrlWithContextPath(
 				SwaggerUiConfigParameters swaggerUiConfigParameters,
@@ -151,10 +199,16 @@ class SwaggerUiCustomizationConfigTest {
 			return "";
 		}
 
+		/**
+		 * Helper for build swagger config url.
+		 */
 		@Override
 		protected void buildSwaggerConfigUrl(SwaggerUiConfigParameters swaggerUiConfigParameters) {
 		}
 
+		/**
+		 * Helper for build from current context path.
+		 */
 		@Override
 		protected void buildFromCurrentContextPath(
 				SwaggerUiConfigParameters swaggerUiConfigParameters,
@@ -166,25 +220,40 @@ class SwaggerUiCustomizationConfigTest {
 
 		private final byte[] content;
 
+		/**
+		 * Helper for null filename resource.
+		 */
 		private NullFilenameResource(String body) {
 			this.content = body.getBytes(StandardCharsets.UTF_8);
 		}
 
+		/**
+		 * Helper for get description.
+		 */
 		@Override
 		public String getDescription() {
 			return "In-memory resource with no filename";
 		}
 
+		/**
+		 * Helper for get input stream.
+		 */
 		@Override
 		public InputStream getInputStream() {
 			return new ByteArrayInputStream(content);
 		}
 
+		/**
+		 * Helper for get filename.
+		 */
 		@Override
 		public String getFilename() {
 			return null;
 		}
 
+		/**
+		 * Helper for get url.
+		 */
 		@Override
 		public URL getURL() throws IOException {
 			try {

@@ -17,6 +17,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for TokenRevocationServiceUnitTest.
+ */
 @ExtendWith(MockitoExtension.class)
 class TokenRevocationServiceUnitTest {
 
@@ -26,11 +29,17 @@ class TokenRevocationServiceUnitTest {
 	@InjectMocks
 	private TokenRevocationServiceImpl service;
 
+	/**
+	 * Verifies is revoked returns false for blank.
+	 */
 	@Test
 	void isRevokedReturnsFalseForBlank() {
 		assertFalse(service.isRevoked(""));
 	}
 
+	/**
+	 * Verifies revoke skips when already revoked.
+	 */
 	@Test
 	void revokeSkipsWhenAlreadyRevoked() {
 		when(revokedTokenDao.existsByJti("jti")).thenReturn(true);
@@ -38,6 +47,9 @@ class TokenRevocationServiceUnitTest {
 		verify(revokedTokenDao, never()).save(org.mockito.ArgumentMatchers.any());
 	}
 
+	/**
+	 * Verifies revoke persists when new.
+	 */
 	@Test
 	void revokePersistsWhenNew() {
 		when(revokedTokenDao.existsByJti("jti")).thenReturn(false);
@@ -51,6 +63,9 @@ class TokenRevocationServiceUnitTest {
 		assertEquals(expiresAt, entity.getExpiresAt());
 	}
 
+	/**
+	 * Verifies cleanup expired deletes by cutoff.
+	 */
 	@Test
 	void cleanupExpiredDeletesByCutoff() {
 		Instant cutoff = Instant.parse("2026-01-31T00:00:00Z");

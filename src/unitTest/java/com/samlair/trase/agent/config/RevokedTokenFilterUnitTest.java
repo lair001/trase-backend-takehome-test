@@ -23,6 +23,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for RevokedTokenFilterUnitTest.
+ */
 @ExtendWith(MockitoExtension.class)
 class RevokedTokenFilterUnitTest {
 
@@ -44,17 +47,26 @@ class RevokedTokenFilterUnitTest {
 	@InjectMocks
 	private RevokedTokenFilter filter;
 
+	/**
+	 * Tears down test fixtures.
+	 */
 	@AfterEach
 	void tearDown() {
 		SecurityContextHolder.clearContext();
 	}
 
+	/**
+	 * Verifies allows when not jwt.
+	 */
 	@Test
 	void allowsWhenNotJwt() throws Exception {
 		filter.doFilterInternal(request, response, filterChain);
 		verify(filterChain).doFilter(request, response);
 	}
 
+	/**
+	 * Verifies allows when no jti.
+	 */
 	@Test
 	void allowsWhenNoJti() throws Exception {
 		Jwt jwt = Jwt.withTokenValue("token")
@@ -70,6 +82,9 @@ class RevokedTokenFilterUnitTest {
 		verify(tokenRevocationService, never()).isRevoked(org.mockito.ArgumentMatchers.any());
 	}
 
+	/**
+	 * Verifies allows when not revoked.
+	 */
 	@Test
 	void allowsWhenNotRevoked() throws Exception {
 		Jwt jwt = Jwt.withTokenValue("token")
@@ -86,6 +101,9 @@ class RevokedTokenFilterUnitTest {
 		verify(filterChain).doFilter(request, response);
 	}
 
+	/**
+	 * Verifies rejects when revoked.
+	 */
 	@Test
 	void rejectsWhenRevoked() throws Exception {
 		Jwt jwt = Jwt.withTokenValue("token")

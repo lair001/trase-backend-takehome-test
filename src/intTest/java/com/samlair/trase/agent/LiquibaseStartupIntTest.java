@@ -6,11 +6,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Integration tests for LiquibaseStartupIntTest.
+ */
 class LiquibaseStartupIntTest extends IntegrationTestBase {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
+	/**
+	 * Verifies liquibase creates core tables.
+	 */
 	@Test
 	void liquibaseCreatesCoreTables() {
 		String agentsTable = jdbcTemplate.queryForObject(

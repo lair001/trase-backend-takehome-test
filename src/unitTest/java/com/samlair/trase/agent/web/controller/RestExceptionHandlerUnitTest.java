@@ -21,11 +21,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for RestExceptionHandlerUnitTest.
+ */
 class RestExceptionHandlerUnitTest {
 
 	private final RateLimiterRegistry rateLimiterRegistry = RateLimiterRegistry.ofDefaults();
 	private final RestExceptionHandler handler = new RestExceptionHandler(rateLimiterRegistry);
 
+	/**
+	 * Verifies handle not found returns 404.
+	 */
 	@Test
 	void handleNotFoundReturns404() {
 		HttpServletRequest request = mockRequest("/agents/1", "GET");
@@ -36,6 +42,9 @@ class RestExceptionHandlerUnitTest {
 		assertEquals("missing", response.getBody().message());
 	}
 
+	/**
+	 * Verifies handle bad request returns 400.
+	 */
 	@Test
 	void handleBadRequestReturns400() {
 		HttpServletRequest request = mockRequest("/tasks", "POST");
@@ -46,6 +55,9 @@ class RestExceptionHandlerUnitTest {
 		assertEquals("bad", response.getBody().message());
 	}
 
+	/**
+	 * Verifies handle validation returns field errors.
+	 */
 	@Test
 	void handleValidationReturnsFieldErrors() {
 		HttpServletRequest request = mockRequest("/tasks", "POST");
@@ -60,6 +72,9 @@ class RestExceptionHandlerUnitTest {
 		assertEquals(Map.of("title", "title is required"), response.getBody().validationErrors());
 	}
 
+	/**
+	 * Verifies handle rate limit returns 429.
+	 */
 	@Test
 	void handleRateLimitReturns429() {
 		HttpServletRequest request = mockRequest("/agents", "GET");
@@ -74,6 +89,9 @@ class RestExceptionHandlerUnitTest {
 				response.getHeaders().getFirst("X-RateLimit-Limit"));
 	}
 
+	/**
+	 * Verifies handle unexpected returns 500.
+	 */
 	@Test
 	void handleUnexpectedReturns500() {
 		HttpServletRequest request = mockRequest("/tasks", "GET");
@@ -85,6 +103,9 @@ class RestExceptionHandlerUnitTest {
 		assertTrue(response.getBody().status() >= 500);
 	}
 
+	/**
+	 * Helper for mock request.
+	 */
 	private HttpServletRequest mockRequest(String uri, String method) {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		when(request.getRequestURI()).thenReturn(uri);

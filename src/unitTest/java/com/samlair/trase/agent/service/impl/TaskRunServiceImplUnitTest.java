@@ -40,6 +40,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.mockStatic;
 
+/**
+ * Unit tests for TaskRunServiceImplUnitTest.
+ */
 @SuppressWarnings("unchecked")
 @ExtendWith(MockitoExtension.class)
 class TaskRunServiceImplUnitTest {
@@ -62,6 +65,9 @@ class TaskRunServiceImplUnitTest {
 	@InjectMocks
 	private TaskRunServiceImpl taskRunService;
 
+	/**
+	 * Verifies start task run throws when task missing.
+	 */
 	@Test
 	void startTaskRunThrowsWhenTaskMissing() {
 		when(taskDao.findByIdAndDeletedAtIsNullBasic(404L)).thenReturn(Optional.empty());
@@ -70,6 +76,9 @@ class TaskRunServiceImplUnitTest {
 		assertTrue(ex.getMessage().contains("Task not found"));
 	}
 
+	/**
+	 * Verifies start task run throws when agent missing.
+	 */
 	@Test
 	void startTaskRunThrowsWhenAgentMissing() {
 		TaskEntity task = new TaskEntity();
@@ -82,6 +91,9 @@ class TaskRunServiceImplUnitTest {
 		assertTrue(ex.getMessage().contains("Agent not found"));
 	}
 
+	/**
+	 * Verifies start task run rejects unsupported agent.
+	 */
 	@Test
 	void startTaskRunRejectsUnsupportedAgent() {
 		AgentEntity agent = new AgentEntity();
@@ -99,6 +111,9 @@ class TaskRunServiceImplUnitTest {
 		verify(taskDao).isAgentSupported(10L, 1L);
 	}
 
+	/**
+	 * Verifies start task run persists running task.
+	 */
 	@Test
 	void startTaskRunPersistsRunningTask() {
 		AgentEntity agent = new AgentEntity();
@@ -128,6 +143,9 @@ class TaskRunServiceImplUnitTest {
 		verify(taskDao).isAgentSupported(20L, 2L);
 	}
 
+	/**
+	 * Verifies start task run returns existing when idempotency key matches.
+	 */
 	@Test
 	void startTaskRunReturnsExistingWhenIdempotencyKeyMatches() {
 		AgentEntity agent = new AgentEntity();
@@ -157,6 +175,9 @@ class TaskRunServiceImplUnitTest {
 		verify(taskRunDao, never()).save(any(TaskRunEntity.class));
 	}
 
+	/**
+	 * Verifies start task run rejects idempotency key reuse with different request.
+	 */
 	@Test
 	void startTaskRunRejectsIdempotencyKeyReuseWithDifferentRequest() {
 		TaskRunIdempotencyEntity idempotency = new TaskRunIdempotencyEntity();
@@ -170,6 +191,9 @@ class TaskRunServiceImplUnitTest {
 		assertTrue(ex.getMessage().contains("Idempotency key already used"));
 	}
 
+	/**
+	 * Verifies start task run returns cached when idempotency save collides.
+	 */
 	@Test
 	void startTaskRunReturnsCachedWhenIdempotencySaveCollides() {
 		AgentEntity agent = new AgentEntity();
@@ -210,6 +234,9 @@ class TaskRunServiceImplUnitTest {
 		assertEquals(55L, response.id());
 	}
 
+	/**
+	 * Verifies start task run propagates idempotency collision without cache.
+	 */
 	@Test
 	void startTaskRunPropagatesIdempotencyCollisionWithoutCache() {
 		AgentEntity agent = new AgentEntity();
@@ -234,6 +261,9 @@ class TaskRunServiceImplUnitTest {
 				() -> taskRunService.startTaskRun(new CreateTaskRunRequestDto(20L, 2L), "key-3"));
 	}
 
+	/**
+	 * Verifies start task run ignores blank idempotency key.
+	 */
 	@Test
 	void startTaskRunIgnoresBlankIdempotencyKey() {
 		AgentEntity agent = new AgentEntity();
@@ -257,6 +287,9 @@ class TaskRunServiceImplUnitTest {
 		verify(taskRunIdempotencyDao, never()).findByIdempotencyKey(any());
 	}
 
+	/**
+	 * Verifies start task run rejects too long idempotency key.
+	 */
 	@Test
 	void startTaskRunRejectsTooLongIdempotencyKey() {
 		String key = "a".repeat(129);
@@ -265,6 +298,9 @@ class TaskRunServiceImplUnitTest {
 		assertTrue(ex.getMessage().contains("Idempotency key too long"));
 	}
 
+	/**
+	 * Verifies update task run status throws when missing.
+	 */
 	@Test
 	void updateTaskRunStatusThrowsWhenMissing() {
 		when(taskRunDao.findById(404L)).thenReturn(Optional.empty());
@@ -275,6 +311,9 @@ class TaskRunServiceImplUnitTest {
 		assertTrue(ex.getMessage().contains("Task run not found"));
 	}
 
+	/**
+	 * Verifies update task run status rejects non running.
+	 */
 	@Test
 	void updateTaskRunStatusRejectsNonRunning() {
 		TaskRunEntity run = new TaskRunEntity();
@@ -288,6 +327,9 @@ class TaskRunServiceImplUnitTest {
 		assertTrue(ex.getMessage().contains("is not running"));
 	}
 
+	/**
+	 * Verifies list task runs supports after id keyset.
+	 */
 	@Test
 	void listTaskRunsSupportsAfterIdKeyset() {
 		TaskRunEntity run = new TaskRunEntity();
@@ -313,6 +355,9 @@ class TaskRunServiceImplUnitTest {
 		assertEquals(TaskRunStatus.RUNNING, response.get(0).status());
 	}
 
+	/**
+	 * Verifies list task runs supports after id keyset with status.
+	 */
 	@Test
 	void listTaskRunsSupportsAfterIdKeysetWithStatus() {
 		TaskRunEntity run = new TaskRunEntity();
@@ -340,6 +385,9 @@ class TaskRunServiceImplUnitTest {
 		assertEquals(TaskRunStatus.COMPLETED, response.get(0).status());
 	}
 
+	/**
+	 * Verifies hash request throws when digest unavailable.
+	 */
 	@Test
 	void hashRequestThrowsWhenDigestUnavailable() throws Exception {
 		try (MockedStatic<MessageDigest> mocked = mockStatic(MessageDigest.class)) {
@@ -354,6 +402,9 @@ class TaskRunServiceImplUnitTest {
 		}
 	}
 
+	/**
+	 * Verifies update task run status sets completed at.
+	 */
 	@Test
 	void updateTaskRunStatusSetsCompletedAt() {
 		TaskRunEntity run = new TaskRunEntity();
@@ -375,6 +426,9 @@ class TaskRunServiceImplUnitTest {
 		assertNotNull(response.completedAt());
 	}
 
+	/**
+	 * Verifies update task run status returns when status unchanged.
+	 */
 	@Test
 	void updateTaskRunStatusReturnsWhenStatusUnchanged() {
 		TaskRunEntity run = new TaskRunEntity();
@@ -397,6 +451,9 @@ class TaskRunServiceImplUnitTest {
 		assertEquals(31L, response.agentId());
 	}
 
+	/**
+	 * Verifies update task run status keeps completed at when already set.
+	 */
 	@Test
 	void updateTaskRunStatusKeepsCompletedAtWhenAlreadySet() {
 		TaskRunEntity run = new TaskRunEntity();
@@ -420,6 +477,9 @@ class TaskRunServiceImplUnitTest {
 		assertEquals(completedAt, response.completedAt());
 	}
 
+	/**
+	 * Helper for hash request.
+	 */
 	private static String hashRequest(long taskId, long agentId) {
 		String payload = taskId + ":" + agentId;
 		try {

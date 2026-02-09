@@ -7,8 +7,14 @@ import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Integration tests for HealthAliasControllerIntTest.
+ */
 class HealthAliasControllerIntTest extends IntegrationTestBase {
 
+	/**
+	 * Verifies healthz returns ok.
+	 */
 	@Test
 	void healthzReturnsOk() {
 		ResponseEntity<String> response = restClient.get()

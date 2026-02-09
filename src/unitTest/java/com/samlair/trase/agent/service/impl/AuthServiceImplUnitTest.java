@@ -27,6 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for AuthServiceImplUnitTest.
+ */
 @ExtendWith(MockitoExtension.class)
 class AuthServiceImplUnitTest {
 
@@ -42,12 +45,18 @@ class AuthServiceImplUnitTest {
 	@InjectMocks
 	private AuthServiceImpl authService;
 
+	/**
+	 * Sets up test fixtures.
+	 */
 	@BeforeEach
 	void setUp() {
 		setField(authService, "issuer", "test-issuer");
 		setField(authService, "tokenTtl", Duration.ofHours(1));
 	}
 
+	/**
+	 * Verifies login returns token and roles.
+	 */
 	@Test
 	void loginReturnsTokenAndRoles() {
 		UserEntity user = new UserEntity();
@@ -77,6 +86,9 @@ class AuthServiceImplUnitTest {
 		assertEquals(java.util.List.of("ADMIN", "OPERATOR"), response.roles());
 	}
 
+	/**
+	 * Verifies login rejects invalid password.
+	 */
 	@Test
 	void loginRejectsInvalidPassword() {
 		UserEntity user = new UserEntity();
@@ -89,6 +101,9 @@ class AuthServiceImplUnitTest {
 		assertThrows(UnauthorizedException.class, () -> authService.login(new LoginRequestDto("admin", "bad")));
 	}
 
+	/**
+	 * Verifies login rejects unknown user.
+	 */
 	@Test
 	void loginRejectsUnknownUser() {
 		when(userDao.findByUsernameAndEnabledTrue("missing")).thenReturn(Optional.empty());
@@ -96,6 +111,9 @@ class AuthServiceImplUnitTest {
 		assertThrows(UnauthorizedException.class, () -> authService.login(new LoginRequestDto("missing", "pw")));
 	}
 
+	/**
+	 * Helper for set field.
+	 */
 	private void setField(Object target, String fieldName, Object value) {
 		try {
 			Field field = target.getClass().getDeclaredField(fieldName);

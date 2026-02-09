@@ -21,11 +21,17 @@ import org.springframework.web.client.HttpClientErrorException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * Integration tests for TaskControllerIntTest.
+ */
 class TaskControllerIntTest extends IntegrationTestBase {
 
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
 			.registerModule(new JavaTimeModule());
 
+	/**
+	 * Verifies create task validates input.
+	 */
 	@Test
 	void createTaskValidatesInput() throws Exception {
 		CreateTaskRequestDto request = new CreateTaskRequestDto("", "", Set.of(), null);
@@ -46,6 +52,9 @@ class TaskControllerIntTest extends IntegrationTestBase {
 		assertThat(error.validationErrors().keySet()).contains("supportedAgentValid");
 	}
 
+	/**
+	 * Verifies create task accepts single supported agent id.
+	 */
 	@Test
 	void createTaskAcceptsSingleSupportedAgentId() {
 		Long agentId = restClient.post()
@@ -73,6 +82,9 @@ class TaskControllerIntTest extends IntegrationTestBase {
 		assertThat(task.supportedAgentId()).isEqualTo(agentId);
 	}
 
+	/**
+	 * Verifies get task returns task.
+	 */
 	@Test
 	void getTaskReturnsTask() {
 		Long agentId = restClient.post()
@@ -102,6 +114,9 @@ class TaskControllerIntTest extends IntegrationTestBase {
 		assertThat(fetched.supportedAgentId()).isEqualTo(agentId);
 	}
 
+	/**
+	 * Verifies update task updates response.
+	 */
 	@Test
 	void updateTaskUpdatesResponse() {
 		Long agentId = restClient.post()
@@ -131,6 +146,9 @@ class TaskControllerIntTest extends IntegrationTestBase {
 		assertThat(updated.supportedAgentId()).isEqualTo(agentId);
 	}
 
+	/**
+	 * Verifies delete task removes from queries.
+	 */
 	@Test
 	void deleteTaskRemovesFromQueries() {
 		CreateAgentRequestDto agentRequest = new CreateAgentRequestDto("Agent", "Agent desc");
@@ -171,6 +189,9 @@ class TaskControllerIntTest extends IntegrationTestBase {
 		assertThat(listed.getBody()).isEmpty();
 	}
 
+	/**
+	 * Verifies update task rejects missing task.
+	 */
 	@Test
 	void updateTaskRejectsMissingTask() {
 		UpdateTaskRequestDto update = new UpdateTaskRequestDto("Title", "Desc", Set.of(1L), null);
@@ -182,6 +203,9 @@ class TaskControllerIntTest extends IntegrationTestBase {
 		assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
 
+	/**
+	 * Verifies list tasks returns page with supported agents.
+	 */
 	@Test
 	void listTasksReturnsPageWithSupportedAgents() {
 		Long agentId = restClient.post()
@@ -228,6 +252,9 @@ class TaskControllerIntTest extends IntegrationTestBase {
 		assertThat(page2.getBody().get(0).supportedAgentId()).isEqualTo(agentId);
 	}
 
+	/**
+	 * Verifies task alias routes behave like tasks.
+	 */
 	@Test
 	void taskAliasRoutesBehaveLikeTasks() {
 		Long agentId = restClient.post()
@@ -269,6 +296,9 @@ class TaskControllerIntTest extends IntegrationTestBase {
 				.toBodilessEntity();
 	}
 
+	/**
+	 * Verifies get missing task returns standard error shape.
+	 */
 	@Test
 	void getMissingTaskReturnsStandardErrorShape() throws Exception {
 		HttpClientErrorException ex = assertThrows(HttpClientErrorException.class, () -> restClient.get()
@@ -284,6 +314,9 @@ class TaskControllerIntTest extends IntegrationTestBase {
 		assertThat(error.path()).isEqualTo("/tasks/99999");
 	}
 
+	/**
+	 * Helper for read error.
+	 */
 	private ApiErrorDto readError(HttpClientErrorException ex) throws Exception {
 		return OBJECT_MAPPER.readValue(ex.getResponseBodyAsString(), ApiErrorDto.class);
 	}

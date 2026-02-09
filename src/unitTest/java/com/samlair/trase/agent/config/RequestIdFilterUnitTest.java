@@ -15,10 +15,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for RequestIdFilterUnitTest.
+ */
 class RequestIdFilterUnitTest {
 
 	private final RequestIdFilter filter = new RequestIdFilter();
 
+	/**
+	 * Verifies generates request id when missing.
+	 */
 	@Test
 	void generatesRequestIdWhenMissing() throws Exception {
 		HttpServletRequest request = mock(HttpServletRequest.class);
@@ -35,6 +41,9 @@ class RequestIdFilterUnitTest {
 		assertNull(MDC.get(RequestIdFilter.REQUEST_ID_MDC_KEY));
 	}
 
+	/**
+	 * Verifies reuses provided request id.
+	 */
 	@Test
 	void reusesProvidedRequestId() throws Exception {
 		HttpServletRequest request = mock(HttpServletRequest.class);
@@ -51,6 +60,9 @@ class RequestIdFilterUnitTest {
 		assertNull(MDC.get(RequestIdFilter.REQUEST_ID_MDC_KEY));
 	}
 
+	/**
+	 * Verifies generates request id when blank.
+	 */
 	@Test
 	void generatesRequestIdWhenBlank() throws Exception {
 		HttpServletRequest request = mock(HttpServletRequest.class);

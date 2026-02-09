@@ -8,8 +8,14 @@ import org.springframework.web.client.RestClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Integration tests for SwaggerUiIntTest.
+ */
 class SwaggerUiIntTest extends IntegrationTestBase {
 
+	/**
+	 * Verifies swagger ui and api docs are public.
+	 */
 	@Test
 	void swaggerUiAndApiDocsArePublic() {
 		RestClient rawClient = RestClient.builder()

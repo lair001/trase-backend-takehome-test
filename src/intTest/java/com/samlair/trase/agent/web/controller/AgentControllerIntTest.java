@@ -22,11 +22,17 @@ import org.springframework.core.ParameterizedTypeReference;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * Integration tests for AgentControllerIntTest.
+ */
 class AgentControllerIntTest extends IntegrationTestBase {
 
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
 			.registerModule(new JavaTimeModule());
 
+	/**
+	 * Verifies create agent task and run lifecycle.
+	 */
 	@Test
 	void createAgentTaskAndRunLifecycle() {
 		CreateAgentRequestDto agentRequest = new CreateAgentRequestDto("Agent A", "Handles tasks");
@@ -74,6 +80,9 @@ class AgentControllerIntTest extends IntegrationTestBase {
 		assertThat(runningRuns.getBody()).hasSize(1);
 	}
 
+	/**
+	 * Verifies create task rejects unknown agent ids.
+	 */
 	@Test
 	void createTaskRejectsUnknownAgentIds() {
 		CreateTaskRequestDto taskRequest = new CreateTaskRequestDto(
@@ -90,6 +99,9 @@ class AgentControllerIntTest extends IntegrationTestBase {
 		assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 
+	/**
+	 * Verifies create agent validates input.
+	 */
 	@Test
 	void createAgentValidatesInput() throws Exception {
 		CreateAgentRequestDto request = new CreateAgentRequestDto("", "");
@@ -104,6 +116,9 @@ class AgentControllerIntTest extends IntegrationTestBase {
 		assertThat(error.validationErrors()).containsKeys("name", "description");
 	}
 
+	/**
+	 * Verifies get agent returns agent.
+	 */
 	@Test
 	void getAgentReturnsAgent() {
 		CreateAgentRequestDto agentRequest = new CreateAgentRequestDto("Agent Fetch", "Fetchable");
@@ -127,6 +142,9 @@ class AgentControllerIntTest extends IntegrationTestBase {
 		assertThat(fetched.description()).isEqualTo("Fetchable");
 	}
 
+	/**
+	 * Verifies update agent updates response.
+	 */
 	@Test
 	void updateAgentUpdatesResponse() {
 		CreateAgentRequestDto agentRequest = new CreateAgentRequestDto("Agent Update", "Before");
@@ -149,6 +167,9 @@ class AgentControllerIntTest extends IntegrationTestBase {
 		assertThat(updated.description()).isEqualTo("After");
 	}
 
+	/**
+	 * Verifies delete agent removes from queries.
+	 */
 	@Test
 	void deleteAgentRemovesFromQueries() {
 		CreateAgentRequestDto agentRequest = new CreateAgentRequestDto("Agent A", "Handles tasks");
@@ -179,6 +200,9 @@ class AgentControllerIntTest extends IntegrationTestBase {
 		assertThat(listed.getBody()).isEmpty();
 	}
 
+	/**
+	 * Verifies list agents respects paging and ordering.
+	 */
 	@Test
 	void listAgentsRespectsPagingAndOrdering() {
 		AgentResponseDto first = restClient.post()
@@ -227,6 +251,9 @@ class AgentControllerIntTest extends IntegrationTestBase {
 				.containsExactly(third.id());
 	}
 
+	/**
+	 * Verifies list agents supports after id keyset.
+	 */
 	@Test
 	void listAgentsSupportsAfterIdKeyset() {
 		AgentResponseDto first = restClient.post()
@@ -253,6 +280,9 @@ class AgentControllerIntTest extends IntegrationTestBase {
 				.containsExactly(second.id());
 	}
 
+	/**
+	 * Helper for read error.
+	 */
 	private ApiErrorDto readError(HttpClientErrorException ex) throws Exception {
 		return OBJECT_MAPPER.readValue(ex.getResponseBodyAsString(), ApiErrorDto.class);
 	}

@@ -6,8 +6,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+/**
+ * Unit tests for RevokedTokenEntityUnitTest.
+ */
 class RevokedTokenEntityUnitTest {
 
+	/**
+	 * Verifies on create sets revoked at when missing.
+	 */
 	@Test
 	void onCreateSetsRevokedAtWhenMissing() {
 		RevokedTokenEntity entity = new RevokedTokenEntity();
@@ -15,6 +21,9 @@ class RevokedTokenEntityUnitTest {
 		assertNotNull(entity.getRevokedAt());
 	}
 
+	/**
+	 * Verifies on create keeps revoked at when present.
+	 */
 	@Test
 	void onCreateKeepsRevokedAtWhenPresent() {
 		RevokedTokenEntity entity = new RevokedTokenEntity();

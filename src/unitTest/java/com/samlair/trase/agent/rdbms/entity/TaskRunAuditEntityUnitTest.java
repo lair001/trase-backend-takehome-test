@@ -6,8 +6,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+/**
+ * Unit tests for TaskRunAuditEntityUnitTest.
+ */
 class TaskRunAuditEntityUnitTest {
 
+	/**
+	 * Verifies on create sets occurred at when missing.
+	 */
 	@Test
 	void onCreateSetsOccurredAtWhenMissing() {
 		TaskRunAuditEntity entity = new TaskRunAuditEntity();
@@ -15,6 +21,9 @@ class TaskRunAuditEntityUnitTest {
 		assertNotNull(entity.getOccurredAt());
 	}
 
+	/**
+	 * Verifies on create keeps occurred at when present.
+	 */
 	@Test
 	void onCreateKeepsOccurredAtWhenPresent() {
 		TaskRunAuditEntity entity = new TaskRunAuditEntity();

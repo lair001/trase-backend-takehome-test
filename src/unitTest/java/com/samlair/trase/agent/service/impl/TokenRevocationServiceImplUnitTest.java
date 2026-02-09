@@ -16,6 +16,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for TokenRevocationServiceImplUnitTest.
+ */
 @ExtendWith(MockitoExtension.class)
 class TokenRevocationServiceImplUnitTest {
 
@@ -25,16 +28,25 @@ class TokenRevocationServiceImplUnitTest {
 	@InjectMocks
 	private TokenRevocationServiceImpl service;
 
+	/**
+	 * Verifies is revoked returns false for blank.
+	 */
 	@Test
 	void isRevokedReturnsFalseForBlank() {
 		assertFalse(service.isRevoked(""));
 	}
 
+	/**
+	 * Verifies is revoked returns false for null.
+	 */
 	@Test
 	void isRevokedReturnsFalseForNull() {
 		assertFalse(service.isRevoked(null));
 	}
 
+	/**
+	 * Verifies revoke skips when already revoked.
+	 */
 	@Test
 	void revokeSkipsWhenAlreadyRevoked() {
 		when(revokedTokenDao.existsByJti("jti")).thenReturn(true);
@@ -42,6 +54,9 @@ class TokenRevocationServiceImplUnitTest {
 		verify(revokedTokenDao, never()).save(org.mockito.ArgumentMatchers.any());
 	}
 
+	/**
+	 * Verifies revoke skips when missing inputs.
+	 */
 	@Test
 	void revokeSkipsWhenMissingInputs() {
 		service.revoke(null, Instant.parse("2026-01-31T00:00:00Z"));
@@ -50,6 +65,9 @@ class TokenRevocationServiceImplUnitTest {
 		verify(revokedTokenDao, never()).save(org.mockito.ArgumentMatchers.any());
 	}
 
+	/**
+	 * Verifies revoke persists when new.
+	 */
 	@Test
 	void revokePersistsWhenNew() {
 		when(revokedTokenDao.existsByJti("jti")).thenReturn(false);
@@ -63,6 +81,9 @@ class TokenRevocationServiceImplUnitTest {
 		assertEquals(expiresAt, entity.getExpiresAt());
 	}
 
+	/**
+	 * Verifies cleanup expired deletes by cutoff.
+	 */
 	@Test
 	void cleanupExpiredDeletesByCutoff() {
 		Instant cutoff = Instant.parse("2026-01-31T00:00:00Z");
@@ -70,6 +91,9 @@ class TokenRevocationServiceImplUnitTest {
 		verify(revokedTokenDao).deleteByExpiresAtBefore(cutoff);
 	}
 
+	/**
+	 * Verifies cleanup expired skips when null.
+	 */
 	@Test
 	void cleanupExpiredSkipsWhenNull() {
 		service.cleanupExpired(null);

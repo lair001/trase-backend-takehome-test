@@ -21,6 +21,9 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+/**
+ * Performance tests for PerfProfileIntTest.
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @ActiveProfiles("int-test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -40,6 +43,9 @@ class PerfProfileIntTest {
 		}
 	}
 
+	/**
+	 * Helper for register data source properties.
+	 */
 	@DynamicPropertySource
 	static void registerDataSourceProperties(DynamicPropertyRegistry registry) {
 		if (!POSTGRES.isRunning()) {
@@ -53,12 +59,18 @@ class PerfProfileIntTest {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
+	/**
+	 * Sets up test fixtures.
+	 */
 	@BeforeEach
 	void cleanDatabase() {
 		new TestDatabaseCleaner(jdbcTemplate).clean();
 		ensureOutputFile();
 	}
 
+	/**
+	 * Verifies profile task and task run queries.
+	 */
 	@Test
 	void profileTaskAndTaskRunQueries() {
 		int agentCount = intProp("perf.agents", 2000);
@@ -153,6 +165,9 @@ class PerfProfileIntTest {
 		explain(runsDeepSql);
 	}
 
+	/**
+	 * Helper for seed agents.
+	 */
 	private void seedAgents(int count) {
 		List<Object[]> batch = new ArrayList<>(count);
 		for (int i = 0; i < count; i++) {
@@ -163,6 +178,9 @@ class PerfProfileIntTest {
 				batch);
 	}
 
+	/**
+	 * Helper for seed tasks.
+	 */
 	private void seedTasks(int count) {
 		List<Object[]> batch = new ArrayList<>(count);
 		for (int i = 0; i < count; i++) {
@@ -173,6 +191,9 @@ class PerfProfileIntTest {
 				batch);
 	}
 
+	/**
+	 * Helper for seed task agent links.
+	 */
 	private void seedTaskAgentLinks(int taskCount, int agentsPerTask, int agentCount) {
 		List<Object[]> batch = new ArrayList<>(taskCount * agentsPerTask);
 		for (int taskId = 1; taskId <= taskCount; taskId++) {
@@ -186,6 +207,9 @@ class PerfProfileIntTest {
 				batch);
 	}
 
+	/**
+	 * Helper for seed task runs.
+	 */
 	private void seedTaskRuns(int count, int taskCount, int agentCount) {
 		List<Object[]> batch = new ArrayList<>(count);
 		for (int i = 0; i < count; i++) {
@@ -200,6 +224,9 @@ class PerfProfileIntTest {
 				batch);
 	}
 
+	/**
+	 * Helper for explain.
+	 */
 	private void explain(String sql) {
 		List<String> planLines = jdbcTemplate.query(
 				"EXPLAIN (ANALYZE, BUFFERS) " + sql,
@@ -211,6 +238,9 @@ class PerfProfileIntTest {
 		}
 	}
 
+	/**
+	 * Helper for int prop.
+	 */
 	private int intProp(String key, int defaultValue) {
 		String value = System.getProperty(key);
 		if (value == null || value.isBlank()) {
@@ -219,6 +249,9 @@ class PerfProfileIntTest {
 		return Integer.parseInt(value);
 	}
 
+	/**
+	 * Helper for ensure output file.
+	 */
 	private void ensureOutputFile() {
 		try {
 			Files.createDirectories(PERF_OUTPUT.getParent());
@@ -230,6 +263,9 @@ class PerfProfileIntTest {
 		}
 	}
 
+	/**
+	 * Helper for append output.
+	 */
 	private void appendOutput(String line) {
 		try {
 			Files.writeString(PERF_OUTPUT, Instant.now() + " " + line + System.lineSeparator(),
@@ -239,6 +275,9 @@ class PerfProfileIntTest {
 		}
 	}
 
+	/**
+	 * Helper for page ids.
+	 */
 	private String pageIds(int offset, int pageSize) {
 		int start = offset + 1;
 		int end = offset + pageSize;
